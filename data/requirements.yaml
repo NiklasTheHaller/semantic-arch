@@ -1,0 +1,263 @@
+- id: "DR-02"
+  source_ids: [2]
+  section: "Company Products and Services"
+  kind: "domain-rule"
+  text: "The product catalog offers prepackaged breakfast products, such as the mini-breakfast and the luxury breakfast."
+
+- id: "FR-03"
+  source_ids: [3]
+  section: "Company Products and Services"
+  kind: "functional"
+  text: "The system lets a customer assemble an individual breakfast by selecting simple products from the product catalog."
+
+- id: "DR-04"
+  source_ids: [4]
+  section: "Company Products and Services"
+  kind: "domain-rule"
+  text: "A prepackaged product is composed of simple products and/or other prepackaged products (nested product composition)."
+
+- id: "DR-05"
+  source_ids: [5]
+  section: "Company Products and Services"
+  kind: "domain-rule"
+  text: "An order consists of order lines, each specifying a product (simple or prepackaged) and an amount."
+
+- id: "DR-06"
+  source_ids: [6]
+  section: "Company Products and Services"
+  kind: "domain-rule"
+  text: "Each product has a unit of measure (e.g. 100 grams) and a price per unit in Euros."
+
+- id: "FR-08"
+  source_ids: [8]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system identifies the customer by the customer number when the customer starts placing an order."
+
+- id: "DR-09"
+  source_ids: [9]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "The system validates that a customer number consists of a two-digit area code, seven digits and a one-digit checksum."
+
+- id: "DR-10"
+  source_ids: [10]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "An order always belongs to exactly one customer; the system does not support collective orders of several customers."
+
+- id: "FR-11a"
+  source_ids: [11]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system authenticates the customer before an order can be placed."
+
+- id: "DR-11b"
+  source_ids: [11]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "During authentication the system checks that the customer is not blacklisted (e.g. due to bad payment morale) and rejects blacklisted customers."
+
+- id: "FR-11c"
+  source_ids: [11]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system lets the customer add one or several products directly to the shopping cart."
+
+- id: "FR-12"
+  source_ids: [12]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system lets the customer search for products by desired characteristics (e.g. less than 300 calories and less than € 4), shows the matching products and lets her add them to the shopping cart."
+
+- id: "FR-13"
+  source_ids: [13]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system lets the customer create a follow-up order by selecting one of her previous orders as a blueprint, copying its products into the shopping cart."
+
+- id: "FR-14"
+  source_ids: [14]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order."
+
+- id: "DR-15"
+  source_ids: [15]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "An order references at most one blueprint order."
+
+- id: "DR-16"
+  source_ids: [16]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "A previous order can be used as the blueprint for any number of new orders."
+
+- id: "DR-17a"
+  source_ids: [17]
+  section: "Placing an Order"
+  kind: "domain-rule"
+  text: "Each customer has exactly one predefined address, which the system uses automatically as the delivery address of her orders."
+
+- id: "FR-17b"
+  source_ids: [17]
+  section: "Placing an Order"
+  kind: "functional"
+  text: "When an order is placed, the system assigns an order number with eight digits and a checksum and shows it to the customer."
+
+- id: "FR-18"
+  source_ids: [18]
+  section: "Packaging an Order"
+  kind: "functional"
+  text: "The system shows the packing clerk each placed order so that she can assemble the ordered products into a paper bag."
+
+- id: "FR-19a"
+  source_ids: [19]
+  section: "Packaging an Order"
+  kind: "functional"
+  text: "The system prints a label for the order bag showing the packing clerk's name, the customer's first name, surname and address, and the order number."
+
+- id: "FR-19b"
+  source_ids: [19]
+  section: "Packaging an Order"
+  kind: "functional"
+  text: "The system lets the packing clerk assign a delivery clerk to the order, and the label shows the assigned delivery clerk."
+
+- id: "FR-21"
+  source_ids: [21]
+  section: "Packaging an Order"
+  kind: "functional"
+  text: "The system prints the invoice of an order in two copies."
+
+- id: "FR-22"
+  source_ids: [22]
+  section: "Packaging an Order"
+  kind: "functional"
+  text: "The invoice shows the label data plus each ordered product with its amount and price, and the total sum of the order."
+
+- id: "DR-23"
+  source_ids: [23]
+  section: "Packaging an Order"
+  kind: "domain-rule"
+  text: "Each printed copy of an invoice gets its own invoice number."
+
+- id: "FR-24"
+  source_ids: [24]
+  section: "Delivering an Order"
+  kind: "functional"
+  text: "The system calculates the optimal delivery itinerary for a delivery clerk, covering several orders in one itinerary."
+
+- id: "FR-25"
+  source_ids: [25]
+  section: "Delivering an Order"
+  kind: "functional"
+  text: "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver."
+
+- id: "FR-26"
+  source_ids: [26]
+  section: "Delivering an Order"
+  kind: "functional"
+  text: "The customer confirms receipt of the delivered order; one invoice copy stays with the customer as her receipt."
+
+- id: "FR-27"
+  source_ids: [27]
+  section: "Status Inquiry"
+  kind: "functional"
+  text: "The system lets the customer look up the status of her order by order number and shows whether the order is already out for delivery."
+
+- id: "FR-28"
+  source_ids: [28]
+  section: "Canceling an Order"
+  kind: "functional"
+  text: "The system lets the customer cancel an order by its order number."
+
+- id: "DR-29"
+  source_ids: [29]
+  section: "Canceling an Order"
+  kind: "domain-rule"
+  text: "The system rejects the cancellation of an order that has already been assembled by the packing clerk."
+
+- id: "DR-30"
+  source_ids: [30]
+  section: "Canceling an Order"
+  kind: "domain-rule"
+  text: "A cancelled order cannot be reactivated; cancellation is final."
+
+- id: "DR-31"
+  source_ids: [31]
+  section: "Canceling an Order"
+  kind: "domain-rule"
+  text: "The system does not allow changes to a placed order; to change it, the customer cancels the order and places a new one."
+
+- id: "FR-34a"
+  source_ids: [34]
+  section: "Automation of Existing Processes"
+  kind: "functional"
+  text: "The system authorises users according to their role: customer, packing clerk, delivery clerk or manager."
+
+- id: "FR-35"
+  source_ids: [35]
+  section: "Automation of Existing Processes"
+  kind: "functional"
+  text: "The system lets the customer confirm the delivery of her order by entering her password in a browser on the delivery clerk's smartphone."
+
+- id: "FR-36"
+  source_ids: [36]
+  section: "Automation of Existing Processes"
+  kind: "functional"
+  text: "The system offers a public product search that anyone can use without logging in."
+
+- id: "FR-37a"
+  source_ids: [37]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "functional"
+  text: "The system accepts orders sent by customers as SMS text messages to the company number."
+
+- id: "DR-37b"
+  source_ids: [37]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "domain-rule"
+  text: "The system parses an SMS order message containing the customer number (C), the password (W) and one or more product codes with amounts (P)."
+
+- id: "DR-38"
+  source_ids: [38]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "domain-rule"
+  text: "Each product has a unique product code."
+
+- id: "DR-39"
+  source_ids: [39]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "domain-rule"
+  text: "An SMS order may contain any number of products, limited only by the maximum length of a text message."
+
+- id: "FR-40"
+  source_ids: [40]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "functional"
+  text: "The system replies to an SMS order with a text message containing the assigned order number."
+
+- id: "FR-41"
+  source_ids: [41]
+  section: "Placing and Canceling an Order by Text Message"
+  kind: "functional"
+  text: "The system cancels an order when it receives an SMS cancellation message containing the order number (O)."
+
+- id: "DR-42"
+  source_ids: [42]
+  section: "Payment"
+  kind: "domain-rule"
+  text: "An expected-payment record for the external payment system contains the customer number, the order number, the amount in Euros and the expected payment date."
+
+- id: "FR-43"
+  source_ids: [43]
+  section: "Payment"
+  kind: "functional"
+  text: "When the packing clerk has finished assembling an order, the system sends an expected-payment record to the external payment system."
+
+- id: "FR-44"
+  source_ids: [44]
+  section: "Business Reporting"
+  kind: "functional"
+  text: "Every night the system automatically prints a business report for the manager listing all orders of the day with products, amounts, packing clerk, delivery clerk, customer, customer address and order number."

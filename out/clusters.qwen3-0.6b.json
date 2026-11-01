@@ -1,0 +1,182 @@
+[
+  {
+    "cluster_id": 0,
+    "name": "Shopping Cart & Order Placement",
+    "responsibility": "Shopping cart composition, follow-up order blueprint copying, order validation, and order number assignment.",
+    "cohesion": 0.7497313,
+    "medoid_id": "FR-14",
+    "medoid_text": "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.",
+    "keywords": [
+      "product",
+      "products",
+      "cart",
+      "prepackaged",
+      "breakfast"
+    ],
+    "requirement_ids": [
+      "DR-02",
+      "DR-04",
+      "DR-05",
+      "DR-06",
+      "DR-15",
+      "DR-16",
+      "DR-38",
+      "FR-03",
+      "FR-11c",
+      "FR-12",
+      "FR-13",
+      "FR-14",
+      "FR-36"
+    ],
+    "source_pdf_ids": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      36,
+      38
+    ]
+  },
+  {
+    "cluster_id": 1,
+    "name": "Role & Permission Authorization",
+    "responsibility": "User role assignment and authorization across customer, packing clerk, delivery clerk, and manager personas.",
+    "cohesion": 0.77696127,
+    "medoid_id": "FR-08",
+    "medoid_text": "The system identifies the customer by the customer number when the customer starts placing an order.",
+    "keywords": [
+      "delivery",
+      "blacklisted",
+      "receipt",
+      "exactly",
+      "digit"
+    ],
+    "requirement_ids": [
+      "DR-09",
+      "DR-10",
+      "DR-11b",
+      "DR-17a",
+      "FR-08",
+      "FR-11a",
+      "FR-26",
+      "FR-27",
+      "FR-34a",
+      "FR-35"
+    ],
+    "source_pdf_ids": [
+      8,
+      9,
+      10,
+      11,
+      17,
+      26,
+      27,
+      34,
+      35
+    ]
+  },
+  {
+    "cluster_id": 2,
+    "name": "SMS Ordering Gateway",
+    "responsibility": "Inbound SMS message syntax parsing for customer orders and cancellations, and automated SMS confirmation replies.",
+    "cohesion": 0.8518857,
+    "medoid_id": "FR-37a",
+    "medoid_text": "The system accepts orders sent by customers as SMS text messages to the company number.",
+    "keywords": [
+      "sms",
+      "text",
+      "message",
+      "containing",
+      "length"
+    ],
+    "requirement_ids": [
+      "DR-37b",
+      "DR-39",
+      "FR-17b",
+      "FR-37a",
+      "FR-40"
+    ],
+    "source_pdf_ids": [
+      17,
+      37,
+      39,
+      40
+    ]
+  },
+  {
+    "cluster_id": 3,
+    "name": "Management Reporting & Analytics",
+    "responsibility": "Automated nightly managerial business reports compiling daily orders, revenues, clerks, and customer logistics.",
+    "cohesion": 0.8010776,
+    "medoid_id": "FR-25",
+    "medoid_text": "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.",
+    "keywords": [
+      "delivery",
+      "payment",
+      "prints",
+      "packing",
+      "invoice"
+    ],
+    "requirement_ids": [
+      "DR-23",
+      "DR-42",
+      "FR-18",
+      "FR-19a",
+      "FR-19b",
+      "FR-21",
+      "FR-22",
+      "FR-24",
+      "FR-25",
+      "FR-43",
+      "FR-44"
+    ],
+    "source_pdf_ids": [
+      18,
+      19,
+      21,
+      22,
+      23,
+      24,
+      25,
+      42,
+      43,
+      44
+    ]
+  },
+  {
+    "cluster_id": 4,
+    "name": "Order Lifecycle & Cancellation",
+    "responsibility": "Order tracking status inquiry, cancellation validation against packaging stage, and immutability management.",
+    "cohesion": 0.87162286,
+    "medoid_id": "FR-28",
+    "medoid_text": "The system lets the customer cancel an order by its order number.",
+    "keywords": [
+      "cancellation",
+      "cancels",
+      "cancel",
+      "changes",
+      "assembled"
+    ],
+    "requirement_ids": [
+      "DR-29",
+      "DR-30",
+      "DR-31",
+      "FR-28",
+      "FR-41"
+    ],
+    "source_pdf_ids": [
+      28,
+      29,
+      30,
+      31,
+      41
+    ]
+  }
+]

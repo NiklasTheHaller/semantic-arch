@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EarlyBird – Semantic Project Architecture Workbench</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Apache ECharts for 2D Interactive Scatter & Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <!-- Mermaid.js for Component Architecture Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Marked for Markdown Report Preview -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .tab-btn.active {
+      border-color: #6366f1;
+      color: #ffffff;
+      background-color: rgba(99, 102, 241, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen flex flex-col overflow-hidden">
+
+  <!-- Top Global Header -->
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-2.5 flex items-center justify-between shadow-sm flex-shrink-0">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-base shadow">
+        EB
+      </div>
+      <div>
+        <h1 class="text-base font-semibold tracking-wide text-white flex items-center gap-2">
+          EarlyBird <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-medium">Semantic Architecture Workbench</span>
+        </h1>
+        <p class="text-[11px] text-slate-400">Application Core Component Discovery from Requirements Vector Topology</p>
+      </div>
+    </div>
+
+    <!-- System Status Badges & Quick Action -->
+    <div class="flex items-center space-x-3">
+      <div id="status-db" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="status-db-text">Qdrant Vector DB: Connected</span>
+      </div>
+      <div id="status-hardware" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300">
+        <span class="text-indigo-400">⚡</span>
+        <span id="status-hardware-text">Loading hardware...</span>
+      </div>
+      <button id="btn-quick-run" class="px-3 py-1 text-xs font-medium rounded-md bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5 shadow">
+        <span id="quick-run-spinner" class="hidden animate-spin">⚪</span>
+        <span>Run Pipeline</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs Bar -->
+  <nav class="bg-slate-900/90 border-b border-slate-800 px-6 flex items-center space-x-2 flex-shrink-0">
+    <button id="tab-btn-reqs" class="tab-btn active px-4 py-3 text-xs font-semibold tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+      <span>📋</span> 1. Requirements & Ingestion
+    </button>
+    <button id="tab-btn-topology" class="tab-btn px-4 py-3 text-xs font-semibold tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+      <span>🌌</span> 2. 2D Semantic Topology
+    </button>
+    <button id="tab-btn-components" class="tab-btn px-4 py-3 text-xs font-semibold tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+      <span>🏗️</span> 3. Discovered Components
+      <span id="nav-comp-count" class="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-500/30 text-indigo-300 font-mono">5</span>
+    </button>
+    <button id="tab-btn-export" class="tab-btn px-4 py-3 text-xs font-semibold tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+      <span>🔀</span> 4. Diagrams & Architecture Report
+    </button>
+  </nav>
+
+  <!-- Tab Contents Area -->
+  <main class="flex-1 overflow-hidden relative">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: Requirements & Ingestion            -->
+    <!-- ========================================== -->
+    <div id="tab-panel-reqs" class="h-full flex overflow-hidden">
+      <!-- Left Config Subpanel -->
+      <div class="w-[420px] border-r border-slate-800 bg-slate-900/50 p-5 flex flex-col space-y-4 overflow-y-auto custom-scroll flex-shrink-0">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Requirements Configuration</h2>
+          <p class="text-xs text-slate-400">Choose dataset input, select embedding model, and configure instruction prompt.</p>
+        </div>
+
+        <!-- Input Source Picker -->
+        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Input Dataset</label>
+            <span id="req-count-badge" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono border border-slate-700">44 items</span>
+          </div>
+          <select id="select-preset" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="earlybird">Case Study EarlyBird V1.50 (44 Normalized Requirements)</option>
+            <option value="custom">Custom Text / YAML Requirements</option>
+          </select>
+          <p class="text-[11px] text-slate-400">Normalized from functional statements & domain rules in Case Study PDF.</p>
+        </div>
+
+        <!-- Textarea for custom input -->
+        <div id="custom-input-box" class="bg-slate-900 p-4 rounded-lg border border-slate-800 space-y-2 hidden">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block">Edit / Custom Input</label>
+          <textarea id="input-requirements" rows="7" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-300 font-mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none custom-scroll" placeholder="Paste custom requirements as YAML or plain text lines..."></textarea>
+        </div>
+
+        <!-- Embedding Model Selection -->
+        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 space-y-3">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block">Embedding Model</label>
+          <select id="select-model" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="qwen3-0.6b">Qwen3-Embedding-0.6B (1024-d, Instruction-aware) [Active]</option>
+            <option value="bge-small">BGE-Small-EN-v1.5 (384-d, ONNX Fast)</option>
+            <option value="qwen3-8b" disabled>Qwen3-Embedding-8B (4096-d, AMD 9070XT ROCm on Linux)</option>
+          </select>
+          <div class="flex items-center space-x-2 pt-1">
+            <input type="checkbox" id="chk-instruction" checked class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0">
+            <label for="chk-instruction" class="text-xs text-slate-300 cursor-pointer select-none">
+              Apply Domain Responsibility Instruction Prompt
+            </label>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Instructs model to project requirements according to business responsibility and architectural capability rather than generic syntax.
+          </p>
+        </div>
+
+        <!-- Ingest Button -->
+        <button id="btn-ingest-run" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium text-xs rounded-lg shadow-md transition flex items-center justify-center space-x-2">
+          <span id="ingest-spinner" class="hidden animate-spin">⚪</span>
+          <span id="ingest-text">Embed & Store in Qdrant Vector DB</span>
+        </button>
+      </div>
+
+      <!-- Right Requirements Viewer Subpanel -->
+      <div class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
+        <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Loaded Requirements Repository</h3>
+            <span id="req-table-count" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">44 Requirements</span>
+          </div>
+          <input type="text" id="filter-requirements" placeholder="Search requirements by ID or text..." class="text-xs bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-slate-300 w-72 focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scroll p-4">
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-semibold tracking-wider sticky top-0 border-b border-slate-800">
+                <tr>
+                  <th class="py-2.5 px-3 w-20">Req ID</th>
+                  <th class="py-2.5 px-3 w-44">Discovered Component</th>
+                  <th class="py-2.5 px-3 w-20">PDF Ref</th>
+                  <th class="py-2.5 px-3">Normalized Functional Requirement</th>
+                </tr>
+              </thead>
+              <tbody id="requirements-table-body" class="divide-y divide-slate-800/60 text-slate-300 font-sans">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: 2D Semantic Topology                -->
+    <!-- ========================================== -->
+    <div id="tab-panel-topology" class="h-full flex flex-col overflow-hidden hidden">
+      <!-- Top Tuning & Metric Bar -->
+      <div class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between gap-6 flex-shrink-0">
+        
+        <!-- Algorithm Toggle -->
+        <div class="flex items-center space-x-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Method:</span>
+          <div class="flex rounded-md bg-slate-950 p-0.5 border border-slate-800">
+            <button id="btn-method-graph" class="py-1 px-3 rounded text-xs font-medium bg-indigo-600 text-white shadow">
+              Qdrant Graph (Louvain)
+            </button>
+            <button id="btn-method-agglo" class="py-1 px-3 rounded text-xs font-medium text-slate-400 hover:text-white">
+              Agglomerative ($k$)
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Tuning Slider -->
+        <div class="flex-1 max-w-md flex items-center space-x-4 bg-slate-950/60 px-4 py-2 rounded-lg border border-slate-800">
+          <div id="panel-slider-graph" class="flex-1 flex items-center space-x-3">
+            <span class="text-xs text-slate-400 whitespace-nowrap">Similarity Threshold:</span>
+            <input type="range" id="range-threshold" min="0.30" max="0.75" step="0.02" value="0.45" class="flex-1 accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+            <span id="val-threshold" class="font-mono text-xs text-indigo-400 font-bold w-10 text-right">0.45</span>
+          </div>
+
+          <div id="panel-slider-agglo" class="flex-1 flex items-center space-x-3 hidden">
+            <span class="text-xs text-slate-400 whitespace-nowrap">Target Clusters ($k$):</span>
+            <input type="range" id="range-k" min="3" max="14" step="1" value="8" class="flex-1 accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+            <span id="val-k" class="font-mono text-xs text-indigo-400 font-bold w-10 text-right">8</span>
+          </div>
+
+          <button id="btn-recluster" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-medium text-xs rounded border border-slate-700 transition whitespace-nowrap flex items-center gap-1 shadow-sm">
+            <span>⚡ Re-Cluster</span>
+            <span class="text-[10px] text-slate-400 font-mono">(~10ms)</span>
+          </button>
+        </div>
+
+        <!-- Summary Metrics Badges -->
+        <div class="flex items-center space-x-3">
+          <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex items-center space-x-2">
+            <span class="text-slate-400">Components:</span>
+            <span id="metric-components" class="font-bold text-white font-mono">5</span>
+          </div>
+          <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex items-center space-x-2">
+            <span class="text-slate-400">Silhouette Score:</span>
+            <span id="metric-silhouette" class="font-bold text-emerald-400 font-mono">0.158</span>
+          </div>
+          <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs flex items-center space-x-2">
+            <span class="text-slate-400">HNSW Pairs:</span>
+            <span id="metric-edges" class="font-bold text-slate-300 font-mono">946</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Main Canvas & Inspection Drawer -->
+      <div class="flex-1 flex overflow-hidden relative">
+        <div id="chart-container" class="flex-1 h-full bg-slate-950"></div>
+
+        <!-- Selected Point Detail Floating Card -->
+        <div id="inspection-card" class="absolute bottom-5 right-5 w-96 bg-slate-900/95 backdrop-blur border border-slate-700 rounded-xl p-4 shadow-2xl hidden">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-700">
+            <div class="flex items-center space-x-2">
+              <span id="inspect-id" class="text-xs font-bold font-mono text-indigo-400">FR-01</span>
+              <span id="inspect-component" class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">Component</span>
+            </div>
+            <span id="inspect-source" class="text-[10px] text-slate-400 font-mono">PDF #[1, 2]</span>
+          </div>
+          <p id="inspect-text" class="text-xs text-slate-200 leading-relaxed mt-1"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: Discovered Components               -->
+    <!-- ========================================== -->
+    <div id="tab-panel-components" class="h-full flex flex-col bg-slate-950 overflow-hidden hidden">
+      <!-- Header Banner -->
+      <div class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between flex-shrink-0">
+        <div>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            Discovered Application Core Architecture
+            <span id="comp-badge-header" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">5 Components</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Each component encapsulates a mathematically cohesive functional cluster from the EarlyBird vector space.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <input type="text" id="filter-components" placeholder="Filter components..." class="text-xs bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-slate-300 w-64 focus:outline-none focus:border-indigo-500">
+        </div>
+      </div>
+
+      <!-- Component Cards Grid -->
+      <div class="flex-1 overflow-y-auto p-6 custom-scroll">
+        <div id="components-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Dynamically populated cards -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: Diagrams & Architecture Report       -->
+    <!-- ========================================== -->
+    <div id="tab-panel-export" class="h-full flex overflow-hidden hidden">
+      
+      <!-- Left Half: Live Mermaid Component Diagram -->
+      <div class="w-1/2 border-r border-slate-800 bg-slate-900/60 p-5 flex flex-col overflow-hidden">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 flex-shrink-0 mb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-white">System Component Topology (Mermaid)</h3>
+            <p class="text-[11px] text-slate-400">Hexagonal core components & external interface adapters</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="btn-copy-mermaid-tab" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-medium rounded border border-slate-700 transition shadow-sm">
+              📋 Copy Code
+            </button>
+          </div>
+        </div>
+
+        <!-- Rendered Mermaid Canvas -->
+        <div id="mermaid-render-container" class="flex-1 bg-slate-950 p-4 rounded-lg border border-slate-800 flex items-center justify-center overflow-auto custom-scroll mb-3">
+          <div id="mermaid-svg-target" class="w-full text-center"></div>
+        </div>
+
+        <!-- Raw Mermaid Code Accordion -->
+        <details class="bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-400">
+          <summary class="cursor-pointer font-mono text-[11px] text-indigo-400 select-none">View Mermaid Source Code</summary>
+          <pre id="mermaid-source-code" class="mt-2 p-2 bg-slate-900 rounded font-mono text-[11px] text-emerald-400 overflow-x-auto custom-scroll"></pre>
+        </details>
+      </div>
+
+      <!-- Right Half: Formal Architecture Proposal Report -->
+      <div class="w-1/2 bg-slate-950 p-5 flex flex-col overflow-hidden">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 flex-shrink-0 mb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Architecture Proposal Specification</h3>
+            <p class="text-[11px] text-slate-400">Comprehensive report with cohesion, cluster metrics & traceability</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <a href="/api/export/markdown" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded shadow transition flex items-center gap-1.5">
+              <span>📄 Download Markdown</span>
+            </a>
+            <a href="/api/export/svg" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded border border-slate-700 shadow transition flex items-center gap-1.5">
+              <span>📊 Download SVG</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Markdown Document Preview -->
+        <div id="markdown-preview" class="flex-1 bg-slate-900/70 p-6 rounded-lg border border-slate-800 overflow-y-auto custom-scroll prose prose-invert max-w-none text-xs leading-relaxed">
+          <p class="text-slate-400 italic">Loading architecture proposal specification...</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Application Logic -->
+  <script>
+    let chartInstance = null;
+    let currentData = null;
+    let selectedMethod = "graph";
+    let activeTab = "reqs";
+
+    const COLOR_PALETTE = [
+      "#38bdf8", "#fb923c", "#4ade80", "#f87171", "#c084fc",
+      "#f472b6", "#a3e635", "#fbbf24", "#2dd4bf", "#818cf8"
+    ];
+
+    async function init() {
+      // 1. Initialize ECharts instance
+      const chartDom = document.getElementById('chart-container');
+      chartInstance = echarts.init(chartDom, 'dark', { renderer: 'canvas' });
+      window.addEventListener('resize', () => {
+        if (chartInstance) chartInstance.resize();
+      });
+
+      // 2. Setup Tabs
+      setupTabs();
+
+      // 3. Setup Listeners
+      setupEventListeners();
+
+      // 4. Fetch System & Hardware Info
+      try {
+        const sysRes = await fetch('/api/system');
+        if (sysRes.ok) {
+          const sys = await sysRes.json();
+          document.getElementById('status-hardware-text').textContent = `${sys.os} • ${sys.hardware}`;
+          document.getElementById('status-db-text').textContent = `Qdrant: ${sys.qdrant_status}`;
+        }
+      } catch (e) {
+        document.getElementById('status-hardware-text').textContent = "Localhost Offline";
+      }
+
+      // 5. Load initial EarlyBird pipeline data
+      await loadPipelineData();
+
+      // 6. Fetch Markdown Report for Tab 4
+      fetchMarkdownReport();
+    }
+
+    function setupTabs() {
+      const tabs = [
+        { id: 'reqs', btn: document.getElementById('tab-btn-reqs'), panel: document.getElementById('tab-panel-reqs') },
+        { id: 'topology', btn: document.getElementById('tab-btn-topology'), panel: document.getElementById('tab-panel-topology') },
+        { id: 'components', btn: document.getElementById('tab-btn-components'), panel: document.getElementById('tab-panel-components') },
+        { id: 'export', btn: document.getElementById('tab-btn-export'), panel: document.getElementById('tab-panel-export') }
+      ];
+
+      tabs.forEach(t => {
+        t.btn.addEventListener('click', () => {
+          tabs.forEach(other => {
+            other.btn.classList.remove('active');
+            other.panel.classList.add('hidden');
+          });
+          t.btn.classList.add('active');
+          t.panel.classList.remove('hidden');
+          activeTab = t.id;
+
+          if (t.id === 'topology' && chartInstance) {
+            setTimeout(() => chartInstance.resize(), 50);
+          }
+          if (t.id === 'export') {
+            renderMermaidDiagram(currentData ? currentData.components : []);
+          }
+        });
+      });
+    }
+
+    function setupEventListeners() {
+      // Clustering method buttons
+      const btnGraph = document.getElementById('btn-method-graph');
+      const btnAgglo = document.getElementById('btn-method-agglo');
+      const panelGraph = document.getElementById('panel-slider-graph');
+      const panelAgglo = document.getElementById('panel-slider-agglo');
+
+      btnGraph.addEventListener('click', () => {
+        selectedMethod = "graph";
+        btnGraph.className = "py-1 px-3 rounded text-xs font-medium bg-indigo-600 text-white shadow";
+        btnAgglo.className = "py-1 px-3 rounded text-xs font-medium text-slate-400 hover:text-white";
+        panelGraph.classList.remove('hidden');
+        panelAgglo.classList.add('hidden');
+      });
+
+      btnAgglo.addEventListener('click', () => {
+        selectedMethod = "agglo";
+        btnAgglo.className = "py-1 px-3 rounded text-xs font-medium bg-indigo-600 text-white shadow";
+        btnGraph.className = "py-1 px-3 rounded text-xs font-medium text-slate-400 hover:text-white";
+        panelAgglo.classList.remove('hidden');
+        panelGraph.classList.add('hidden');
+      });
+
+      // Slider updates
+      const rangeThreshold = document.getElementById('range-threshold');
+      rangeThreshold.addEventListener('input', (e) => {
+        document.getElementById('val-threshold').textContent = parseFloat(e.target.value).toFixed(2);
+      });
+
+      const rangeK = document.getElementById('range-k');
+      rangeK.addEventListener('input', (e) => {
+        document.getElementById('val-k').textContent = e.target.value;
+      });
+
+      // Run and Re-cluster actions
+      document.getElementById('btn-quick-run').addEventListener('click', () => triggerRun(false));
+      document.getElementById('btn-ingest-run').addEventListener('click', () => triggerRun(false));
+      document.getElementById('btn-recluster').addEventListener('click', () => triggerRun(true));
+
+      // Preset change
+      const selectPreset = document.getElementById('select-preset');
+      const customBox = document.getElementById('custom-input-box');
+      selectPreset.addEventListener('change', () => {
+        if (selectPreset.value === 'custom') {
+          customBox.classList.remove('hidden');
+        } else {
+          customBox.classList.add('hidden');
+        }
+      });
+
+      // Requirements filter
+      document.getElementById('filter-requirements').addEventListener('input', (e) => {
+        filterRequirementsTable(e.target.value);
+      });
+
+      // Component filter
+      document.getElementById('filter-components').addEventListener('input', (e) => {
+        filterComponentsGrid(e.target.value);
+      });
+
+      // Copy Mermaid
+      document.getElementById('btn-copy-mermaid-tab').addEventListener('click', () => {
+        const code = document.getElementById('mermaid-source-code').textContent;
+        navigator.clipboard.writeText(code);
+        alert('Mermaid diagram copied to clipboard!');
+      });
+    }
+
+    async function loadPipelineData() {
+      try {
+        const res = await fetch('/api/pipeline/current');
+        if (res.ok) {
+          const data = await res.json();
+          currentData = data;
+          renderAll(data);
+        }
+      } catch (err) {
+        console.error("Failed to load pipeline data:", err);
+      }
+    }
+
+    async function triggerRun(fastRecluster) {
+      const btnQuick = document.getElementById('btn-quick-run');
+      const spinnerQuick = document.getElementById('quick-run-spinner');
+      const btnIngest = document.getElementById('btn-ingest-run');
+      const spinnerIngest = document.getElementById('ingest-spinner');
+      const textIngest = document.getElementById('ingest-text');
+
+      btnQuick.disabled = true;
+      btnIngest.disabled = true;
+      spinnerQuick.classList.remove('hidden');
+      spinnerIngest.classList.remove('hidden');
+      textIngest.textContent = fastRecluster ? "Re-clustering..." : "Embedding & Ingesting...";
+
+      const payload = {
+        model: document.getElementById('select-model').value,
+        instruction: document.getElementById('chk-instruction').checked,
+        method: selectedMethod,
+        threshold: parseFloat(document.getElementById('range-threshold').value),
+        target_k: parseInt(document.getElementById('range-k').value),
+        fast_recluster: fastRecluster,
+        custom_input: document.getElementById('select-preset').value === 'custom'
+          ? document.getElementById('input-requirements').value
+          : null
+      };
+
+      try {
+        const res = await fetch('/api/pipeline/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          currentData = data;
+          renderAll(data);
+          fetchMarkdownReport();
+        } else {
+          const err = await res.text();
+          alert("Pipeline error: " + err);
+        }
+      } catch (e) {
+        alert("Failed to connect to backend: " + e.message);
+      } finally {
+        btnQuick.disabled = false;
+        btnIngest.disabled = false;
+        spinnerQuick.classList.add('hidden');
+        spinnerIngest.classList.add('hidden');
+        textIngest.textContent = "Embed & Store in Qdrant Vector DB";
+      }
+    }
+
+    function renderAll(data) {
+      // 1. Update Metrics
+      document.getElementById('metric-components').textContent = data.components.length;
+      document.getElementById('metric-silhouette').textContent = data.silhouette.toFixed(3);
+      document.getElementById('metric-edges').textContent = `${data.pairs_count || 946}`;
+      document.getElementById('nav-comp-count').textContent = data.components.length;
+      document.getElementById('comp-badge-header').textContent = `${data.components.length} Components`;
+
+      // 2. Tab 1: Render Requirements Table
+      renderRequirementsTable(data);
+
+      // 3. Tab 2: Render 2D Chart
+      renderChart(data);
+
+      // 4. Tab 3: Render Components Grid
+      renderComponentsGrid(data);
+
+      // 5. Tab 4: Render Mermaid Diagram
+      renderMermaidDiagram(data.components);
+    }
+
+    function renderRequirementsTable(data) {
+      const tbody = document.getElementById('requirements-table-body');
+      tbody.innerHTML = '';
+
+      const compMap = {};
+      data.components.forEach((c, idx) => {
+        compMap[c.cluster_id] = { name: c.name, color: COLOR_PALETTE[idx % COLOR_PALETTE.length] };
+      });
+
+      data.points.forEach((p) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/80 transition req-row";
+        tr.dataset.text = (p.id + " " + p.text).toLowerCase();
+
+        const comp = compMap[p.cluster_id] || { name: "Unknown", color: "#64748b" };
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono font-bold text-indigo-400">${p.id}</td>
+          <td class="py-2.5 px-3">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium" style="background-color: ${comp.color}15; color: ${comp.color}; border: 1px solid ${comp.color}40">
+              <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${comp.color}"></span>
+              ${comp.name}
+            </span>
+          </td>
+          <td class="py-2.5 px-3 font-mono text-slate-400 text-[11px]">#[${p.source_ids.join(', ')}]</td>
+          <td class="py-2.5 px-3 text-slate-200 leading-relaxed">${p.text}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('req-table-count').textContent = `${data.points.length} Requirements`;
+    }
+
+    function filterRequirementsTable(query) {
+      const q = query.toLowerCase().trim();
+      document.querySelectorAll('.req-row').forEach(row => {
+        if (!q || row.dataset.text.includes(q)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function renderChart(data) {
+      const points = data.points;
+      const components = data.components;
+
+      const seriesList = components.map((comp, cIdx) => {
+        const color = COLOR_PALETTE[cIdx % COLOR_PALETTE.length];
+        const clusterPoints = points.filter(p => p.cluster_id === comp.cluster_id);
+
+        return {
+          name: `C${comp.cluster_id + 1}: ${comp.name}`,
+          type: 'scatter',
+          symbolSize: 14,
+          data: clusterPoints.map(p => [p.x, p.y, p.id, p.text, p.source_ids]),
+          itemStyle: {
+            color: color,
+            shadowBlur: 10,
+            shadowColor: color
+          },
+          label: {
+            show: true,
+            formatter: (param) => param.data[2],
+            position: 'right',
+            color: '#cbd5e1',
+            fontSize: 10,
+            fontWeight: 500
+          }
+        };
+      });
+
+      const option = {
+        backgroundColor: '#020617',
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: 'rgba(15, 23, 42, 0.95)',
+          borderColor: '#475569',
+          borderWidth: 1,
+          padding: 12,
+          textStyle: { color: '#f8fafc', fontSize: 12 },
+          formatter: (params) => {
+            const [x, y, id, text, sources] = params.data;
+            return `
+              <div class="max-w-sm">
+                <div class="flex items-center justify-between pb-1 mb-1 border-b border-slate-700">
+                  <span class="font-bold text-indigo-400 font-mono">${id}</span>
+                  <span class="text-[11px] text-slate-400">PDF #[${sources.join(', ')}]</span>
+                </div>
+                <div class="text-slate-200 mt-1 text-xs leading-relaxed">${text}</div>
+                <div class="text-[11px] text-indigo-300 font-semibold mt-2">${params.seriesName}</div>
+              </div>
+            `;
+          }
+        },
+        legend: {
+          top: 15,
+          right: 25,
+          orient: 'vertical',
+          textStyle: { color: '#94a3b8', fontSize: 11 },
+          backgroundColor: 'rgba(15, 23, 42, 0.85)',
+          borderColor: '#334155',
+          borderWidth: 1,
+          padding: 12,
+          borderRadius: 8
+        },
+        grid: {
+          left: '4%',
+          right: '24%',
+          top: '6%',
+          bottom: '6%'
+        },
+        xAxis: {
+          type: 'value',
+          scale: true,
+          splitLine: { lineStyle: { color: '#1e293b' } },
+          axisLabel: { color: '#64748b' }
+        },
+        yAxis: {
+          type: 'value',
+          scale: true,
+          splitLine: { lineStyle: { color: '#1e293b' } },
+          axisLabel: { color: '#64748b' }
+        },
+        dataZoom: [{ type: 'inside' }],
+        series: seriesList
+      };
+
+      chartInstance.setOption(option, true);
+
+      // Click to inspect
+      chartInstance.on('click', (params) => {
+        if (params.data) {
+          const [x, y, id, text, sources] = params.data;
+          const inspectCard = document.getElementById('inspection-card');
+          document.getElementById('inspect-id').textContent = id;
+          document.getElementById('inspect-component').textContent = params.seriesName;
+          document.getElementById('inspect-source').textContent = `PDF #[${sources.join(', ')}]`;
+          document.getElementById('inspect-text').textContent = text;
+          inspectCard.classList.remove('hidden');
+        }
+      });
+    }
+
+    function renderComponentsGrid(data) {
+      const container = document.getElementById('components-grid');
+      container.innerHTML = '';
+
+      data.components.forEach((comp, idx) => {
+        const color = COLOR_PALETTE[idx % COLOR_PALETTE.length];
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition shadow-md flex flex-col justify-between comp-card";
+        card.style.borderTop = `4px solid ${color}`;
+        card.dataset.title = comp.name.toLowerCase();
+
+        const keywordsHtml = comp.keywords.map(kw =>
+          `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 mr-1 mb-1 inline-block border border-slate-700">${kw}</span>`
+        ).join('');
+
+        const reqListHtml = comp.requirement_ids.map(rid =>
+          `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-indigo-300 border border-slate-800 mr-1 mb-1 inline-block">${rid}</span>`
+        ).join('');
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
+                C${comp.cluster_id + 1}: ${comp.name}
+              </h3>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 font-mono text-emerald-400 font-bold border border-slate-700" title="Internal Cluster Cohesion">
+                Cohesion: ${comp.cohesion.toFixed(2)}
+              </span>
+            </div>
+            
+            <p class="text-xs text-slate-300 mt-2.5 leading-relaxed">${comp.responsibility}</p>
+
+            <div class="mt-3.5 pt-3 border-t border-slate-800/80">
+              <div class="text-[10px] uppercase font-bold text-slate-400 mb-1.5">Distinguishing Keywords:</div>
+              <div class="flex flex-wrap">${keywordsHtml}</div>
+            </div>
+
+            <div class="mt-3">
+              <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Central Medoid Requirement:</div>
+              <div class="text-[11px] text-slate-200 bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                <span class="font-mono text-indigo-400 font-bold">[${comp.medoid_id}]</span> "${comp.medoid_text}"
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800/80">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Allocated Requirements (${comp.requirement_ids.length}):</span>
+              <span class="text-[10px] text-slate-500 font-mono">PDF #[${comp.source_pdf_ids.join(', ')}]</span>
+            </div>
+            <div class="flex flex-wrap">${reqListHtml}</div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function filterComponentsGrid(query) {
+      const q = query.toLowerCase().trim();
+      document.querySelectorAll('.comp-card').forEach(card => {
+        if (!q || card.dataset.title.includes(q)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function renderMermaidDiagram(components) {
+      if (!components || components.length === 0) return;
+
+      let code = "graph TD\n";
+      code += "    classDef core fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;\n";
+      code += "    classDef adapter fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;\n\n";
+
+      components.forEach(comp => {
+        const id = `C${comp.cluster_id + 1}`;
+        const cleanName = comp.name.replace(/&/g, "and");
+        const isAdapter = comp.name.includes("SMS") || comp.name.includes("Payment") || comp.name.includes("Reporting");
+        const cls = isAdapter ? "adapter" : "core";
+        code += `    ${id}["${id}: ${cleanName}"]:::${cls}\n`;
+      });
+
+      // Semantic interactions between earlybird components
+      code += `\n    C3 -->|Places Order| C1\n`;
+      code += `    C3 -->|Cancels Order| C4\n`;
+      code += `    C1 -->|Verifies Account| C2\n`;
+      code += `    C1 -->|Assembled Order| C4\n`;
+      code += `    C4 -->|Completed Order| C5\n`;
+
+      document.getElementById('mermaid-source-code').textContent = code;
+
+      try {
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        const target = document.getElementById('mermaid-svg-target');
+        target.innerHTML = '';
+        mermaid.render('mermaid-graph-svg', code).then(({ svg }) => {
+          target.innerHTML = svg;
+        });
+      } catch (err) {
+        console.error("Mermaid render error:", err);
+      }
+    }
+
+    async function fetchMarkdownReport() {
+      try {
+        const res = await fetch('/api/export/markdown');
+        if (res.ok) {
+          const md = await res.text();
+          const preview = document.getElementById('markdown-preview');
+          preview.innerHTML = marked.parse(md);
+        }
+      } catch (e) {
+        console.error("Failed to fetch markdown report preview:", e);
+      }
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

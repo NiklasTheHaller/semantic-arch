@@ -1,0 +1,27 @@
+# Rust build artifacts
+target/
+**/target/
+**/*.rs.bk
+
+# FastEmbed / Hugging Face model cache (downloaded weights ~1.2 GB)
+.fastembed_cache/
+**/.fastembed_cache/
+*.safetensors
+*.onnx
+
+# Docker / Qdrant local volume
+qdrant_storage/
+**/qdrant_storage/
+
+# Python caches / scratch venvs
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# OS & IDE temporary files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
