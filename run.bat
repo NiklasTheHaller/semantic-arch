@@ -12,8 +12,8 @@ if %ERRORLEVEL% equ 0 (
     docker compose up -d >nul 2>&1
 )
 
-echo Starting Workbench on http://localhost:3030 ...
+echo Starting Workbench in Release Mode on http://localhost:3030 ...
 cd earlybird-arch
-cargo run -- serve --port 3030
+cargo run --release -- serve --port 3030
 
 pause
