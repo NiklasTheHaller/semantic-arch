@@ -1,9 +1,12 @@
 @echo off
 setlocal
 echo ============================================================
-echo   EarlyBird Semantic Architecture Workbench (Windows)
+echo   Semantic Architecture Workbench (Windows)
 echo ============================================================
 cd /d "%~dp0"
+
+REM Terminate any lingering previous instance to prevent port 3030 collision
+taskkill /F /IM earlybird-arch.exe >nul 2>&1
 
 REM If qdrant is not running, attempt to start it via docker-compose if docker is installed
 where docker >nul 2>&1
