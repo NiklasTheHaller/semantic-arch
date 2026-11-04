@@ -1,0 +1,604 @@
+{
+  "id": "baseline_1793802316",
+  "name": "Baseline: Normalized (Qwen3-0.6B + Instruct)",
+  "timestamp": "1793802316",
+  "model": "qwen3-0.6b",
+  "instruction": true,
+  "method": "graph",
+  "num_requirements": 44,
+  "num_components": 3,
+  "silhouette": 0.14038788,
+  "data": {
+    "points": [
+      {
+        "id": "REQ-01",
+        "text": "We guarantee breakfast delivery in less than 25 minutes to all parts of the city.",
+        "x": 0.11826482,
+        "y": 0.039787605,
+        "cluster_id": 0,
+        "source_ids": [
+          1
+        ]
+      },
+      {
+        "id": "REQ-02",
+        "text": "We offer a number of prepackaged breakfasts like the mini-breakfast (one croissant, one coffee), the luxury breakfast (one croissant, one glass of orange juice, two kinds of jam, ham and eggs, one cup of coffee) and many more.",
+        "x": 0.21049307,
+        "y": 0.2385627,
+        "cluster_id": 0,
+        "source_ids": [
+          2
+        ]
+      },
+      {
+        "id": "REQ-03",
+        "text": "Of course, our customers can also assemble an individual breakfast to their taste by choosing from a long list of simple products (croissant, orange juice, butter, …).",
+        "x": 0.24791013,
+        "y": 0.2122128,
+        "cluster_id": 0,
+        "source_ids": [
+          3
+        ]
+      },
+      {
+        "id": "REQ-04",
+        "text": "A prepackaged product may contain simple products, but also other prepackaged products.",
+        "x": 0.20305216,
+        "y": 0.3717605,
+        "cluster_id": 0,
+        "source_ids": [
+          4
+        ]
+      },
+      {
+        "id": "REQ-05",
+        "text": "So, a typical order consists of various amounts of various products (prepackaged ones and/or simple ones).",
+        "x": 0.18760921,
+        "y": 0.17124882,
+        "cluster_id": 0,
+        "source_ids": [
+          5
+        ]
+      },
+      {
+        "id": "REQ-06",
+        "text": "Each product has a unit (e.g. 100 grams) and a price per unit denominated in Euros.",
+        "x": 0.045993946,
+        "y": 0.1637054,
+        "cluster_id": 0,
+        "source_ids": [
+          6
+        ]
+      },
+      {
+        "id": "REQ-07",
+        "text": "Currently, our customers can place orders only over the phone.",
+        "x": 0.19681787,
+        "y": -0.2408129,
+        "cluster_id": 1,
+        "source_ids": [
+          7
+        ]
+      },
+      {
+        "id": "REQ-08",
+        "text": "To do so, they call our company number 384 29 734 and tell us their customer number.",
+        "x": -0.019413477,
+        "y": -0.24894974,
+        "cluster_id": 1,
+        "source_ids": [
+          8
+        ]
+      },
+      {
+        "id": "REQ-09",
+        "text": "A customer number has seven digits that are preceded by a two-digit area code and followed by a one digit checksum.",
+        "x": -0.14420536,
+        "y": -0.16435656,
+        "cluster_id": 1,
+        "source_ids": [
+          9
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "text": "There are no collective orders of several customers.",
+        "x": 0.09345988,
+        "y": 0.030964375,
+        "cluster_id": 0,
+        "source_ids": [
+          10
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "text": "After the phone clerk has authenticated the customer (which includes checking that he is not blacklisted e.g. due to bad payment morale) the customer names one or several products to be added to the shopping cart.",
+        "x": 0.04527265,
+        "y": -0.11786512,
+        "cluster_id": 1,
+        "source_ids": [
+          11
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "text": "If the customer is not sure about certain products, she can tell the phone clerk the desired characteristics (e.g. less than 300 calories and less than € 4) and gets a choice of suitable products to pick from.",
+        "x": 0.21431158,
+        "y": -0.0574962,
+        "cluster_id": 1,
+        "source_ids": [
+          12
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "text": "The customer can also decide to simply place a follow-up-order by naming one of her previous orders, which serves as a blueprint for the new order.",
+        "x": 0.12607092,
+        "y": -0.055948127,
+        "cluster_id": 0,
+        "source_ids": [
+          13
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "text": "Those three methods of assembling the shopping cart (direct naming of products, choosing from a list of suitable products presented by the phone clerk, naming an order as a blueprint) can be combined within placing one order.",
+        "x": 0.1880511,
+        "y": 0.10907149,
+        "cluster_id": 0,
+        "source_ids": [
+          14
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "text": "However, an order can only have one blueprint order at most.",
+        "x": 0.15034668,
+        "y": 0.09158217,
+        "cluster_id": 0,
+        "source_ids": [
+          15
+        ]
+      },
+      {
+        "id": "REQ-16",
+        "text": "One order can serve as a blueprint many times.",
+        "x": 0.17493038,
+        "y": 0.1521194,
+        "cluster_id": 0,
+        "source_ids": [
+          16
+        ]
+      },
+      {
+        "id": "REQ-17",
+        "text": "For each customer, only one address is predefined. Therefore, there is no need to specify a delivery address when ordering. The process ends by the phone clerk informing the customer about the order number, which is an eight-digit number with a checksum.",
+        "x": -0.050985638,
+        "y": -0.15968318,
+        "cluster_id": 1,
+        "source_ids": [
+          17
+        ]
+      },
+      {
+        "id": "REQ-18",
+        "text": "A packing clerk looks at each order, assembles the ordered products and puts them into a paper bag.",
+        "x": -0.16306102,
+        "y": 0.12947129,
+        "cluster_id": 2,
+        "source_ids": [
+          18
+        ]
+      },
+      {
+        "id": "REQ-19",
+        "text": "Using an ordinary text processing system, the packing clerk prints a label with his own name, the first name of the customer, the surname of the customer, the address, the order number and the delivery clerk he assigned to the order.",
+        "x": -0.33220044,
+        "y": 0.092761174,
+        "cluster_id": 2,
+        "source_ids": [
+          19
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "text": "The label is attached to the paper bag.",
+        "x": -0.16931713,
+        "y": 0.16657206,
+        "cluster_id": 2,
+        "source_ids": [
+          20
+        ]
+      },
+      {
+        "id": "REQ-21",
+        "text": "Also, the packing clerk prints an invoice twice with the text processing system.",
+        "x": -0.3928337,
+        "y": 0.10986701,
+        "cluster_id": 2,
+        "source_ids": [
+          21
+        ]
+      },
+      {
+        "id": "REQ-22",
+        "text": "The invoice shows the same data as the label plus the individual ordered products, their amounts and prices and the sum total.",
+        "x": -0.27560702,
+        "y": 0.13408926,
+        "cluster_id": 2,
+        "source_ids": [
+          22
+        ]
+      },
+      {
+        "id": "REQ-23",
+        "text": "If an invoice is printed several times, each copy gets a separate number.",
+        "x": -0.35674587,
+        "y": 0.03859968,
+        "cluster_id": 2,
+        "source_ids": [
+          23
+        ]
+      },
+      {
+        "id": "REQ-24",
+        "text": "The delivery clerk calculates the optimal itinerary, often using an ordinary spreadsheet. This is important as many orders may be fulfilled within one itinerary.",
+        "x": -0.12954026,
+        "y": 0.09056524,
+        "cluster_id": 2,
+        "source_ids": [
+          24
+        ]
+      },
+      {
+        "id": "REQ-25",
+        "text": "The delivery clerk prints out the optimal itinerary, takes the corresponding bags and invoices and drives to the corresponding customers.",
+        "x": -0.2908327,
+        "y": 0.036499027,
+        "cluster_id": 2,
+        "source_ids": [
+          25
+        ]
+      },
+      {
+        "id": "REQ-26",
+        "text": "Each customer confirms delivery by signing a copy of the invoice. She keeps the other copy.",
+        "x": -0.26424083,
+        "y": -0.09943817,
+        "cluster_id": 2,
+        "source_ids": [
+          26
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "text": "Each customer can inquire into the status of her order over the phone using the order number. The phone clerk then tells the customer whether the delivery clerk is already on his way or not.",
+        "x": 0.03622764,
+        "y": -0.25049174,
+        "cluster_id": 1,
+        "source_ids": [
+          27
+        ]
+      },
+      {
+        "id": "REQ-28",
+        "text": "Canceling an order is possible by calling the phone clerk and naming the order number.",
+        "x": 0.09882178,
+        "y": -0.30325764,
+        "cluster_id": 1,
+        "source_ids": [
+          28
+        ]
+      },
+      {
+        "id": "REQ-29",
+        "text": "Once the order has been assembled, canceling is not possible anymore.",
+        "x": 0.12536444,
+        "y": -0.17224413,
+        "cluster_id": 0,
+        "source_ids": [
+          29
+        ]
+      },
+      {
+        "id": "REQ-30",
+        "text": "A cancelation cannot be undone.",
+        "x": -0.012531239,
+        "y": -0.17781171,
+        "cluster_id": 0,
+        "source_ids": [
+          30
+        ]
+      },
+      {
+        "id": "REQ-31",
+        "text": "Updating of orders is not possible. If the customer wants to change an order, she has to cancel it and place a new order.",
+        "x": 0.10533515,
+        "y": -0.1836644,
+        "cluster_id": 0,
+        "source_ids": [
+          31
+        ]
+      },
+      {
+        "id": "REQ-32",
+        "text": "We want the current process to be automated (but not changed) by a web-based application. The application replaces the current ordering by phone which will be discontinued. It also replaces the text processing system used for labeling and the tools used for calculating and printing the optimal itinerary.",
+        "x": -0.022274848,
+        "y": 0.047940116,
+        "cluster_id": 0,
+        "source_ids": [
+          32
+        ]
+      },
+      {
+        "id": "REQ-33",
+        "text": "The application is supposed to support modern browsers in current versions.",
+        "x": 0.14272988,
+        "y": 0.1365111,
+        "cluster_id": 0,
+        "source_ids": [
+          33
+        ]
+      },
+      {
+        "id": "REQ-34",
+        "text": "The user groups are: customers, packing clerks, delivery clerks and managers. There will be no phone clerks in the future.",
+        "x": 0.019934738,
+        "y": 0.013955596,
+        "cluster_id": 0,
+        "source_ids": [
+          34
+        ]
+      },
+      {
+        "id": "REQ-35",
+        "text": "The confirmation of the delivery by the customer should also be browser-based: The delivery clerk presents a smartphone to the customer who enters her password in a browser window to confirm the delivery.",
+        "x": -0.006869331,
+        "y": -0.135455,
+        "cluster_id": 1,
+        "source_ids": [
+          35
+        ]
+      },
+      {
+        "id": "REQ-36",
+        "text": "The software should offer a browser-based product search function that requires no authentication. The product search also replaces having the phone clerk list suitable products.",
+        "x": 0.19866131,
+        "y": 0.11746628,
+        "cluster_id": 0,
+        "source_ids": [
+          36
+        ]
+      },
+      {
+        "id": "REQ-37",
+        "text": "In the future, customers can also order by text messages (SMS). In this case they send a defined string to our company number 384 29 734. The string looks like this: C 2339110045 W mypswd P EGG 1 P TOAST 2 P OJUICE 1. This represents an order of the customer with the customer number 2339110045 having the password mypswd. The order is for one egg, two toasts and one glass of orange juice.",
+        "x": 0.12931828,
+        "y": -0.21040754,
+        "cluster_id": 1,
+        "source_ids": [
+          37
+        ]
+      },
+      {
+        "id": "REQ-38",
+        "text": "Each product has a unique product code as shown above.",
+        "x": 0.13948403,
+        "y": 0.2062745,
+        "cluster_id": 0,
+        "source_ids": [
+          38
+        ]
+      },
+      {
+        "id": "REQ-39",
+        "text": "The string may contain any number of products but is naturally limited by the length text messages can have in general.",
+        "x": 0.09297357,
+        "y": 0.06135733,
+        "cluster_id": 1,
+        "source_ids": [
+          39
+        ]
+      },
+      {
+        "id": "REQ-40",
+        "text": "The system responds with a text message specifying the order number the system has assigned to the order.",
+        "x": -0.035871092,
+        "y": -0.11771455,
+        "cluster_id": 1,
+        "source_ids": [
+          40
+        ]
+      },
+      {
+        "id": "REQ-41",
+        "text": "Canceling by text message should be possible by sending a text message of the form O 261273842 to the above number. In the example, the order with the order number 261273842 is canceled.",
+        "x": 0.08329286,
+        "y": -0.34987307,
+        "cluster_id": 1,
+        "source_ids": [
+          41
+        ]
+      },
+      {
+        "id": "REQ-42",
+        "text": "We have a payment system already in place. It receives interface records for expected payments. The interface record comprises the customerNumber, the orderNumber, the amountInEuros and the expected payment date.",
+        "x": -0.18379314,
+        "y": -0.053366426,
+        "cluster_id": 2,
+        "source_ids": [
+          42
+        ]
+      },
+      {
+        "id": "REQ-43",
+        "text": "Once the packing clerk has finished assembling an order, a record representing an expected payment for the order should be transferred to the payment system.",
+        "x": -0.25577962,
+        "y": -0.019122394,
+        "cluster_id": 2,
+        "source_ids": [
+          43
+        ]
+      },
+      {
+        "id": "REQ-44",
+        "text": "The system is supposed to print a business report for the manager every night automatically that lists the orders of a given day along with the product, the amount, the packing clerk and the delivery clerk, the customer, the customer’s address and the order number.",
+        "x": -0.2686246,
+        "y": 0.15501359,
+        "cluster_id": 2,
+        "source_ids": [
+          44
+        ]
+      }
+    ],
+    "components": [
+      {
+        "cluster_id": 0,
+        "name": "Shopping Cart & Order Placement",
+        "responsibility": "Shopping cart composition, follow-up order blueprint copying, order validation, and order number assignment.",
+        "cohesion": 0.7064116,
+        "medoid_id": "REQ-05",
+        "medoid_text": "So, a typical order consists of various amounts of various products (prepackaged ones and/or simple ones).",
+        "keywords": [
+          "product",
+          "products",
+          "blueprint",
+          "prepackaged",
+          "breakfast"
+        ],
+        "requirement_ids": [
+          "REQ-01",
+          "REQ-02",
+          "REQ-03",
+          "REQ-04",
+          "REQ-05",
+          "REQ-06",
+          "REQ-10",
+          "REQ-13",
+          "REQ-14",
+          "REQ-15",
+          "REQ-16",
+          "REQ-29",
+          "REQ-30",
+          "REQ-31",
+          "REQ-32",
+          "REQ-33",
+          "REQ-34",
+          "REQ-36",
+          "REQ-38"
+        ],
+        "source_pdf_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          10,
+          13,
+          14,
+          15,
+          16,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          36,
+          38
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "name": "SMS Ordering Gateway",
+        "responsibility": "Inbound SMS message syntax parsing for customer orders and cancellations, and automated SMS confirmation replies.",
+        "cohesion": 0.7736532,
+        "medoid_id": "REQ-27",
+        "medoid_text": "Each customer can inquire into the status of her order over the phone using the order number. The phone clerk then tells the customer whether the delivery clerk is already on his way or not.",
+        "keywords": [
+          "phone",
+          "digit",
+          "string",
+          "message",
+          "text"
+        ],
+        "requirement_ids": [
+          "REQ-07",
+          "REQ-08",
+          "REQ-09",
+          "REQ-11",
+          "REQ-12",
+          "REQ-17",
+          "REQ-27",
+          "REQ-28",
+          "REQ-35",
+          "REQ-37",
+          "REQ-39",
+          "REQ-40",
+          "REQ-41"
+        ],
+        "source_pdf_ids": [
+          7,
+          8,
+          9,
+          11,
+          12,
+          17,
+          27,
+          28,
+          35,
+          37,
+          39,
+          40,
+          41
+        ]
+      },
+      {
+        "cluster_id": 2,
+        "name": "Fulfilment & Packing Operations",
+        "responsibility": "Order assembly by packing clerks, delivery clerk assignment, bag labeling, and duplicate numbered invoice generation.",
+        "cohesion": 0.78540736,
+        "medoid_id": "REQ-25",
+        "medoid_text": "The delivery clerk prints out the optimal itinerary, takes the corresponding bags and invoices and drives to the corresponding customers.",
+        "keywords": [
+          "invoice",
+          "packing",
+          "payment",
+          "copy",
+          "prints"
+        ],
+        "requirement_ids": [
+          "REQ-18",
+          "REQ-19",
+          "REQ-20",
+          "REQ-21",
+          "REQ-22",
+          "REQ-23",
+          "REQ-24",
+          "REQ-25",
+          "REQ-26",
+          "REQ-42",
+          "REQ-43",
+          "REQ-44"
+        ],
+        "source_pdf_ids": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          42,
+          43,
+          44
+        ]
+      }
+    ],
+    "silhouette": 0.14038788,
+    "pairs_count": 946
+  }
+}

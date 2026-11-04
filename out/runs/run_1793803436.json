@@ -1,0 +1,132 @@
+{
+  "id": "run_1793803436",
+  "name": "dumb test (qwen3-0.6b) [3c]",
+  "timestamp": "1793803436",
+  "model": "qwen3-0.6b",
+  "instruction": true,
+  "method": "agglo",
+  "num_requirements": 5,
+  "num_components": 3,
+  "silhouette": 0.57732934,
+  "data": {
+    "points": [
+      {
+        "id": "REQ-01",
+        "text": "pretzel making machine.",
+        "x": -0.14107789,
+        "y": 0.16684167,
+        "cluster_id": 0,
+        "source_ids": [
+          1
+        ]
+      },
+      {
+        "id": "REQ-02",
+        "text": "pizza making machine.",
+        "x": -0.10145586,
+        "y": 0.24147582,
+        "cluster_id": 0,
+        "source_ids": [
+          2
+        ]
+      },
+      {
+        "id": "REQ-03",
+        "text": "cat making machine.",
+        "x": -0.20586781,
+        "y": -0.06306207,
+        "cluster_id": 0,
+        "source_ids": [
+          3
+        ]
+      },
+      {
+        "id": "REQ-04",
+        "text": "dog making machine.",
+        "x": -0.13828067,
+        "y": -0.32775396,
+        "cluster_id": 2,
+        "source_ids": [
+          4
+        ]
+      },
+      {
+        "id": "REQ-05",
+        "text": "newsletter sending automation.",
+        "x": 0.586682,
+        "y": -0.017501378,
+        "cluster_id": 1,
+        "source_ids": [
+          5
+        ]
+      }
+    ],
+    "components": [
+      {
+        "cluster_id": 0,
+        "name": "Management Reporting & Analytics",
+        "responsibility": "Automated nightly managerial business reports compiling daily orders, revenues, clerks, and customer logistics.",
+        "cohesion": 0.8918645,
+        "medoid_id": "REQ-01",
+        "medoid_text": "pretzel making machine.",
+        "keywords": [
+          "making",
+          "machine",
+          "pretzel",
+          "cat",
+          "pizza"
+        ],
+        "requirement_ids": [
+          "REQ-01",
+          "REQ-02",
+          "REQ-03"
+        ],
+        "source_pdf_ids": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "name": "SMS Ordering Gateway",
+        "responsibility": "Inbound SMS message syntax parsing for customer orders and cancellations, and automated SMS confirmation replies.",
+        "cohesion": 1.0,
+        "medoid_id": "REQ-05",
+        "medoid_text": "newsletter sending automation.",
+        "keywords": [
+          "newsletter",
+          "sending",
+          "automation"
+        ],
+        "requirement_ids": [
+          "REQ-05"
+        ],
+        "source_pdf_ids": [
+          5
+        ]
+      },
+      {
+        "cluster_id": 2,
+        "name": "Fulfilment & Packing Operations",
+        "responsibility": "Order assembly by packing clerks, delivery clerk assignment, bag labeling, and duplicate numbered invoice generation.",
+        "cohesion": 1.0,
+        "medoid_id": "REQ-04",
+        "medoid_text": "dog making machine.",
+        "keywords": [
+          "dog",
+          "making",
+          "machine"
+        ],
+        "requirement_ids": [
+          "REQ-04"
+        ],
+        "source_pdf_ids": [
+          4
+        ]
+      }
+    ],
+    "silhouette": 0.57732934,
+    "pairs_count": 10
+  }
+}

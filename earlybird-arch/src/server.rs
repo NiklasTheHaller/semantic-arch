@@ -21,7 +21,7 @@ use crate::cluster::{
 };
 use crate::embed::{embed_requirements, EmbeddedItem, ModelType};
 use crate::label::{
-    label_clusters_with_candidates, precompute_candidate_embeddings, ClusterComponent,
+    compute_component_edges, label_clusters, ClusterComponent, ComponentEdge, NamingMode,
 };
 use crate::report::{generate_cluster_svg, generate_markdown_report, pca_2d};
 use crate::requirements::{load_requirements, Requirement};
@@ -43,8 +43,11 @@ pub struct Point2D {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PipelineDataResponse {
+    pub project_name: String,
+    pub naming_mode: String,
     pub points: Vec<Point2D>,
     pub components: Vec<ClusterComponent>,
+    pub edges: Vec<ComponentEdge>,
     pub silhouette: f32,
     pub pairs_count: usize,
 }
@@ -74,6 +77,8 @@ pub struct PipelineRunRequest {
     pub target_k: Option<usize>,
     pub fast_recluster: bool,
     pub custom_input: Option<String>,
+    pub naming_mode: Option<String>,
+    pub project_name: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -84,6 +89,10 @@ pub struct RunSummary {
     pub model: String,
     pub instruction: bool,
     pub method: String,
+    #[serde(default)]
+    pub naming_mode: Option<String>,
+    #[serde(default)]
+    pub project_name: Option<String>,
     pub num_requirements: usize,
     pub num_components: usize,
     pub silhouette: f32,
@@ -97,6 +106,10 @@ pub struct RunSnapshot {
     pub model: String,
     pub instruction: bool,
     pub method: String,
+    #[serde(default)]
+    pub naming_mode: Option<String>,
+    #[serde(default)]
+    pub project_name: Option<String>,
     pub num_requirements: usize,
     pub num_components: usize,
     pub silhouette: f32,
@@ -140,13 +153,15 @@ pub struct CompareResult {
 pub struct PipelineSession {
     pub model_type: ModelType,
     pub instruction: bool,
+    pub naming_mode: NamingMode,
+    pub project_name: String,
     pub items: Vec<EmbeddedItem>,
     pub components: Vec<ClusterComponent>,
+    pub edges: Vec<ComponentEdge>,
     pub labels: Vec<usize>,
     pub points_2d: Vec<(f32, f32)>,
     pub silhouette: f32,
     pub pairs: Vec<MatrixPair>,
-    pub candidate_embeddings: Vec<Vec<f32>>,
     pub qdrant_client: Option<Qdrant>,
     pub qdrant_address: Option<String>,
     pub collection: String,
@@ -204,20 +219,11 @@ pub async fn start_server(
     let silhouette = silhouette_score(&embeddings, &labels);
     let points_2d = pca_2d(&embeddings);
 
-    // 4. Precompute candidate component embeddings for fast matching
-    let cand_cache_path = out_dir.join(format!("candidate_embeddings.{}.json", model_type));
-    let candidate_embeddings = if cand_cache_path.exists() {
-        println!("Loading cached candidate embeddings from {:?}", cand_cache_path);
-        let content = std::fs::read_to_string(&cand_cache_path)?;
-        serde_json::from_str::<Vec<Vec<f32>>>(&content)?
-    } else {
-        println!("Precomputing candidate architecture embeddings...");
-        let embs = precompute_candidate_embeddings(model_type)?;
-        let json = serde_json::to_string_pretty(&embs)?;
-        let _ = std::fs::write(&cand_cache_path, json);
-        embs
-    };
-    let components = label_clusters_with_candidates(&items, &labels, &candidate_embeddings)?;
+    // 4. Algorithmically synthesize components (SoftwareArchetype mode, no hardcoded candidates)
+    let naming_mode = NamingMode::SoftwareArchetype;
+    let project_name = "EarlyBird".to_string();
+    let components = label_clusters(&items, &labels, naming_mode)?;
+    let edges = compute_component_edges(&items, &labels, &components);
 
     let initial_points: Vec<Point2D> = items
         .iter()
@@ -232,6 +238,7 @@ pub async fn start_server(
         })
         .collect();
     let initial_components = components.clone();
+    let initial_edges = edges.clone();
     let initial_pairs_count = pairs.len();
     let initial_num_items = items.len();
 
@@ -248,13 +255,15 @@ pub async fn start_server(
     let session = PipelineSession {
         model_type,
         instruction: true,
+        naming_mode,
+        project_name: project_name.clone(),
         items,
         components,
+        edges,
         labels,
         points_2d,
         silhouette,
         pairs,
-        candidate_embeddings,
         qdrant_client,
         qdrant_address,
         collection: "earlybird_requirements".to_string(),
@@ -307,12 +316,17 @@ pub async fn start_server(
             model: "qwen3-0.6b".to_string(),
             instruction: true,
             method: "graph".to_string(),
+            naming_mode: Some("archetype".to_string()),
+            project_name: Some(project_name.clone()),
             num_requirements: initial_num_items,
             num_components: initial_components.len(),
             silhouette,
             data: PipelineDataResponse {
+                project_name: project_name.clone(),
+                naming_mode: "archetype".to_string(),
                 points: initial_points,
                 components: initial_components,
+                edges: initial_edges,
                 silhouette,
                 pairs_count: initial_pairs_count,
             },
@@ -422,8 +436,11 @@ async fn get_current_pipeline(State(state): State<AppState>) -> Json<PipelineDat
         .collect();
 
     Json(PipelineDataResponse {
+        project_name: session.project_name.clone(),
+        naming_mode: session.naming_mode.as_str().to_string(),
         points,
         components: session.components.clone(),
+        edges: session.edges.clone(),
         silhouette: session.silhouette,
         pairs_count: session.pairs.len(),
     })
@@ -434,6 +451,15 @@ async fn run_pipeline(
     Json(payload): Json<PipelineRunRequest>,
 ) -> Result<Json<PipelineDataResponse>, (StatusCode, String)> {
     let mut session = state.session.write().await;
+
+    let naming_mode = NamingMode::from_str_opt(payload.naming_mode.as_deref());
+    if let Some(ref p) = payload.project_name {
+        let trimmed = p.trim();
+        if !trimmed.is_empty() {
+            session.project_name = trimmed.to_string();
+        }
+    }
+    session.naming_mode = naming_mode;
 
     let target_model = payload
         .model
@@ -498,20 +524,6 @@ async fn run_pipeline(
         }
         session.pairs = pairs;
         session.points_2d = pca_2d(&embeddings);
-
-        // Precompute or load candidate embeddings for this model
-        let cand_cache_path = state.out_dir.join(format!("candidate_embeddings.{}.json", target_model));
-        session.candidate_embeddings = if cand_cache_path.exists() {
-            let content = std::fs::read_to_string(&cand_cache_path)
-                .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-            serde_json::from_str::<Vec<Vec<f32>>>(&content)
-                .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-        } else {
-            let embs = precompute_candidate_embeddings(target_model)
-                .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-            let _ = std::fs::write(&cand_cache_path, serde_json::to_string_pretty(&embs).unwrap_or_default());
-            embs
-        };
     }
 
     let embeddings: Vec<Vec<f32>> = session.items.iter().map(|it| it.embedding.clone()).collect();
@@ -530,8 +542,9 @@ async fn run_pipeline(
     };
 
     let silhouette = silhouette_score(&embeddings, &labels);
-    let components = label_clusters_with_candidates(&session.items, &labels, &session.candidate_embeddings)
+    let components = label_clusters(&session.items, &labels, naming_mode)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    let edges = compute_component_edges(&session.items, &labels, &components);
 
     // Optionally update Qdrant points payload if connected
     if let Some(ref client) = session.qdrant_client {
@@ -549,6 +562,7 @@ async fn run_pipeline(
 
     session.labels = labels.clone();
     session.components = components.clone();
+    session.edges = edges.clone();
     session.silhouette = silhouette;
 
     // Generate output files in background/disk
@@ -557,6 +571,7 @@ async fn run_pipeline(
     let _ = generate_markdown_report(
         &components,
         &session.items,
+        &session.project_name,
         &session.model_type.to_string(),
         silhouette,
         components.len(),
@@ -565,7 +580,7 @@ async fn run_pipeline(
         &md_path,
     );
     let svg_path = state.out_dir.join("clusters.svg");
-    let _ = generate_cluster_svg(&session.items, &labels, &components, &svg_path);
+    let _ = generate_cluster_svg(&session.items, &labels, &components, &session.project_name, &svg_path);
 
     let points = session
         .items
@@ -582,8 +597,11 @@ async fn run_pipeline(
         .collect();
 
     Ok(Json(PipelineDataResponse {
+        project_name: session.project_name.clone(),
+        naming_mode: naming_mode.as_str().to_string(),
         points,
         components,
+        edges,
         silhouette,
         pairs_count: session.pairs.len(),
     }))
@@ -671,6 +689,8 @@ async fn list_runs(State(state): State<AppState>) -> Json<Vec<RunSummary>> {
                             model: snap.model,
                             instruction: snap.instruction,
                             method: snap.method,
+                            naming_mode: snap.naming_mode,
+                            project_name: snap.project_name,
                             num_requirements: snap.num_requirements,
                             num_components: snap.num_components,
                             silhouette: snap.silhouette,
@@ -717,8 +737,11 @@ async fn save_run(
         .collect();
 
     let data = PipelineDataResponse {
+        project_name: session.project_name.clone(),
+        naming_mode: session.naming_mode.as_str().to_string(),
         points,
         components: session.components.clone(),
+        edges: session.edges.clone(),
         silhouette: session.silhouette,
         pairs_count: session.pairs.len(),
     };
@@ -734,6 +757,8 @@ async fn save_run(
         model: session.model_type.to_string(),
         instruction: session.instruction,
         method: payload.method.unwrap_or_else(|| "graph".to_string()),
+        naming_mode: Some(session.naming_mode.as_str().to_string()),
+        project_name: Some(session.project_name.clone()),
         num_requirements: session.items.len(),
         num_components: session.components.len(),
         silhouette: session.silhouette,
@@ -765,9 +790,14 @@ async fn load_run(
 
     let mut session = state.session.write().await;
     session.components = snap.data.components.clone();
+    session.edges = snap.data.edges.clone();
     session.silhouette = snap.data.silhouette;
     session.labels = snap.data.points.iter().map(|p| p.cluster_id).collect();
     session.points_2d = snap.data.points.iter().map(|p| (p.x, p.y)).collect();
+    if !snap.data.project_name.is_empty() {
+        session.project_name = snap.data.project_name.clone();
+    }
+    session.naming_mode = NamingMode::from_str_opt(Some(&snap.data.naming_mode));
 
     // Sync items text/id if point counts match
     if session.items.len() == snap.data.points.len() {
@@ -777,6 +807,22 @@ async fn load_run(
             session.items[i].source_ids = p.source_ids.clone();
         }
     }
+
+    // Update markdown report and cluster svg
+    let md_path = state.out_dir.join("components.md");
+    let _ = generate_markdown_report(
+        &session.components,
+        &session.items,
+        &session.project_name,
+        &session.model_type.to_string(),
+        session.silhouette,
+        session.components.len(),
+        session.silhouette,
+        1.0,
+        &md_path,
+    );
+    let svg_path = state.out_dir.join("clusters.svg");
+    let _ = generate_cluster_svg(&session.items, &session.labels, &session.components, &session.project_name, &svg_path);
 
     Ok(Json(snap.data))
 }

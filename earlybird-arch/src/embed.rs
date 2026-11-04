@@ -148,6 +148,7 @@ pub fn embed_requirements(
     Ok(cached)
 }
 
+#[allow(dead_code)]
 pub fn embed_single_texts(texts: &[&str], model_type: ModelType) -> Result<Vec<Vec<f32>>> {
     match model_type {
         ModelType::Qwen3_06B => {

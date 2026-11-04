@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EarlyBird – Semantic Project Architecture Workbench</title>
+  <title>Semantic Project Architecture Workbench</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Apache ECharts for 2D Interactive Scatter & Graph -->
@@ -29,14 +29,15 @@
   <!-- Top Global Header -->
   <header class="bg-slate-900 border-b border-slate-800 px-6 py-2.5 flex items-center justify-between shadow-sm flex-shrink-0">
     <div class="flex items-center space-x-3">
-      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-base shadow">
+      <div id="header-avatar" class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-base shadow">
         EB
       </div>
       <div>
         <h1 class="text-base font-semibold tracking-wide text-white flex items-center gap-2">
-          EarlyBird <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-medium">Semantic Architecture Workbench</span>
+          <span id="header-project-name">EarlyBird</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-medium">Semantic Architecture Workbench</span>
         </h1>
-        <p class="text-[11px] text-slate-400">Application Core Component Discovery from Requirements Vector Topology</p>
+        <p class="text-[11px] text-slate-400">Algorithmic Component Discovery from Vector Topology • Zero Hardcoded Candidates</p>
       </div>
     </div>
 
@@ -104,10 +105,30 @@
     <!-- ========================================== -->
     <div id="tab-panel-reqs" class="h-full flex overflow-hidden">
       <!-- Left Config Subpanel -->
-      <div class="w-[420px] border-r border-slate-800 bg-slate-900/50 p-5 flex flex-col space-y-4 overflow-y-auto custom-scroll flex-shrink-0">
+      <div class="w-[440px] border-r border-slate-800 bg-slate-900/50 p-5 flex flex-col space-y-4 overflow-y-auto custom-scroll flex-shrink-0">
         <div>
-          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Requirements Configuration</h2>
-          <p class="text-xs text-slate-400">Choose dataset input, select embedding model, and configure instruction prompt.</p>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Architecture Configuration</h2>
+          <p class="text-xs text-slate-400">Configure project identity, input dataset, synthesis mode, and embedding model.</p>
+        </div>
+
+        <!-- Project Identity & Synthesis Mode -->
+        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 space-y-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Project Name</label>
+            <input type="text" id="input-project-name" value="EarlyBird" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 font-medium focus:outline-none focus:border-indigo-500" placeholder="e.g. EarlyBird, Healthcare System, Drone Fleet">
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Component Synthesis Mode</label>
+            <select id="select-naming-mode" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+              <option value="archetype">Software Patterns (Service, Repository, Gateway, Manager, Policy)</option>
+              <option value="inferred">Pure Inferred (c-TF-IDF Collocations & Medoid Action Verbs)</option>
+            </select>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            <span class="text-indigo-300 font-medium">Software Patterns:</span> Maps semantic clusters into standard real-life software engineering roles.<br>
+            <span class="text-indigo-300 font-medium">Pure Inferred:</span> Generates data-driven component names out of thin air without architectural assumptions.
+          </p>
         </div>
 
         <!-- Input Source Picker -->
@@ -117,17 +138,19 @@
             <span id="req-count-badge" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono border border-slate-700">44 items</span>
           </div>
           <select id="select-preset" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500">
-            <option value="earlybird">Case Study EarlyBird V1.50 (44 Normalized Requirements)</option>
-            <option value="custom">Custom Text / YAML Requirements (Base / Unrewritten)</option>
+            <option value="earlybird">Case Study: EarlyBird V1.50 (44 Normalized Requirements)</option>
+            <option value="earlybird_base">Case Study: EarlyBird Raw (44 Unrewritten Sentences)</option>
+            <option value="hospital">Sample Domain: Healthcare & Hospital Patient Care (10 Requirements)</option>
+            <option value="drone">Sample Domain: Autonomous Drone Fleet Logistics (9 Requirements)</option>
+            <option value="custom">Custom Text / YAML Requirements (Freeform)</option>
           </select>
-          <p class="text-[11px] text-slate-400">Normalized from functional statements & domain rules in Case Study PDF.</p>
         </div>
 
         <!-- Textarea for custom input -->
         <div id="custom-input-box" class="bg-slate-900 p-4 rounded-lg border border-slate-800 space-y-2 hidden">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Custom / Base Text</label>
-            <button id="btn-load-base-preset" class="text-[10px] text-indigo-400 hover:text-indigo-300 underline">Load Base (Raw 44)</button>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Requirements Text</label>
+            <span class="text-[10px] text-slate-400 font-mono">1 requirement per line or YAML</span>
           </div>
           <textarea id="input-requirements" rows="7" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-300 font-mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none custom-scroll" placeholder="Paste custom requirements as YAML or plain text lines..."></textarea>
         </div>
@@ -174,9 +197,10 @@
               <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-semibold tracking-wider sticky top-0 border-b border-slate-800">
                 <tr>
                   <th class="py-2.5 px-3 w-20">Req ID</th>
-                  <th class="py-2.5 px-3 w-44">Discovered Component</th>
+                  <th class="py-2.5 px-3 w-48">Discovered Component</th>
+                  <th class="py-2.5 px-3 w-28">Archetype</th>
                   <th class="py-2.5 px-3 w-20">PDF Ref</th>
-                  <th class="py-2.5 px-3">Normalized Functional Requirement</th>
+                  <th class="py-2.5 px-3">Functional Statement / Domain Rule</th>
                 </tr>
               </thead>
               <tbody id="requirements-table-body" class="divide-y divide-slate-800/60 text-slate-300 font-sans">
@@ -209,7 +233,7 @@
         </div>
 
         <!-- Dynamic Tuning Slider -->
-        <div class="flex-1 max-w-md flex items-center space-x-4 bg-slate-950/60 px-4 py-2 rounded-lg border border-slate-800">
+        <div class="flex-1 max-w-lg flex items-center space-x-3 bg-slate-950/60 px-4 py-2 rounded-lg border border-slate-800">
           <div id="panel-slider-graph" class="flex-1 flex items-center space-x-3">
             <span class="text-xs text-slate-400 whitespace-nowrap">Similarity Threshold:</span>
             <input type="range" id="range-threshold" min="0.30" max="0.75" step="0.02" value="0.45" class="flex-1 accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
@@ -221,6 +245,12 @@
             <input type="range" id="range-k" min="3" max="14" step="1" value="8" class="flex-1 accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
             <span id="val-k" class="font-mono text-xs text-indigo-400 font-bold w-10 text-right">8</span>
           </div>
+
+          <!-- Quick Mode Switcher in Tab 2 -->
+          <select id="tab2-naming-mode" class="text-[11px] bg-slate-900 border border-slate-700 text-indigo-300 rounded px-2 py-1 focus:outline-none">
+            <option value="archetype">Patterns Mode</option>
+            <option value="inferred">Inferred Mode</option>
+          </select>
 
           <button id="btn-recluster" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-medium text-xs rounded border border-slate-700 transition whitespace-nowrap flex items-center gap-1 shadow-sm">
             <span>⚡ Re-Cluster</span>
@@ -272,11 +302,11 @@
       <div class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div>
           <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            Discovered Application Core Architecture
+            Discovered Application Architecture
             <span id="comp-badge-header" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">5 Components</span>
           </h2>
           <p class="text-xs text-slate-400 mt-0.5">
-            Each component encapsulates a mathematically cohesive functional cluster from the EarlyBird vector space.
+            Algorithmically synthesized component boundaries, responsibilities, and c-TF-IDF keyword signatures.
           </p>
         </div>
 
@@ -303,7 +333,7 @@
         <div class="flex items-center justify-between pb-3 border-b border-slate-800 flex-shrink-0 mb-3">
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-white">System Component Topology (Mermaid)</h3>
-            <p class="text-[11px] text-slate-400">Hexagonal core components & external interface adapters</p>
+            <p class="text-[11px] text-slate-400">Dynamic architecture graph synthesized from cross-component vector coupling</p>
           </div>
           <div class="flex items-center space-x-2">
             <button id="btn-copy-mermaid-tab" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-medium rounded border border-slate-700 transition shadow-sm">
@@ -380,7 +410,7 @@
       </div>
 
       <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono">
-        <span id="loading-details">Processing 44 requirements...</span>
+        <span id="loading-details">Processing requirements...</span>
         <span id="loading-percent">0%</span>
       </div>
     </div>
@@ -398,7 +428,7 @@
       <p class="text-xs text-slate-400 leading-relaxed">Save current embeddings, coordinates, and component assignments to switch or compare later.</p>
       <div>
         <label class="text-[11px] text-slate-300 block mb-1">Snapshot Label / Name</label>
-        <input type="text" id="input-snapshot-name" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="e.g. Raw Base Requirements (Qwen3)">
+        <input type="text" id="input-snapshot-name" class="w-full text-xs bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="e.g. Healthcare System (Qwen3)">
       </div>
       <div class="flex justify-end gap-2 pt-2">
         <button id="btn-cancel-save" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
@@ -429,19 +459,16 @@
 
       <!-- Selectors & Metrics Summary Bar -->
       <div class="py-4 border-b border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-4 flex-shrink-0">
-        <!-- Run A Selector -->
         <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Baseline (Run A)</label>
           <select id="compare-select-a" class="w-full text-xs bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 focus:outline-none focus:border-indigo-500"></select>
         </div>
 
-        <!-- Run B Selector -->
         <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Comparison Target (Run B)</label>
           <select id="compare-select-b" class="w-full text-xs bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 focus:outline-none focus:border-indigo-500"></select>
         </div>
 
-        <!-- ARI & Shift Stats -->
         <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between px-4">
           <div>
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Adjusted Rand Index</span>
@@ -547,6 +574,27 @@ We have a payment system already in place. It receives interface records for exp
 Once the packing clerk has finished assembling an order, a record representing an expected payment for the order should be transferred to the payment system.
 The system is supposed to print a business report for the manager every night automatically that lists the orders of a given day along with the product, the amount, the packing clerk and the delivery clerk, the customer, the customer’s address and the order number.`;
 
+    const HOSPITAL_REQUIREMENTS_TEXT = `Patients must be registered upon arrival with verified national insurance ID and emergency triage priority score.
+The system shall track room and bed occupancy in real-time across intensive care and general surgical wards.
+Doctors prescribe medication orders specifying exact drug codes, dosage quantities, and administration intervals.
+The pharmacy subsystem validates medication orders against patient allergies and known drug-to-drug interactions.
+Vital signs telemetry streams from bedside heart-rate and oxygen monitors must be ingested every 15 seconds.
+If oxygen saturation falls below 90 percent, an immediate critical alert is dispatched to on-duty nursing pagers.
+Discharge summaries must be compiled into standard HL7 CDA format and transmitted to the regional health registry.
+Access to patient electronic health records requires multi-factor cryptographic authentication and biometric confirmation.
+All surgical suite scheduling and equipment sanitation workflows must enforce mandatory sterilization checklist sign-offs.
+A nightly managerial audit report computes hospital bed utilization, average triage wait times, and medication inventory levels.`;
+
+    const DRONE_REQUIREMENTS_TEXT = `Drones must receive mission flight plans containing GPS waypoints, altitude ceilings, and restricted no-fly zones.
+The fleet telemetry gateway ingests real-time drone coordinates, battery voltage, and motor temperature via cellular 5G.
+When battery charge drops below 20 percent, an autonomous emergency return-to-base trajectory is calculated and commanded.
+The payload bay actuator verifies parcel barcode checksum and securely locks before takeoff clearance.
+Customer delivery drop-off is verified when the drone hovers at 2 meters altitude and the customer scans an optical QR token.
+Air traffic collision avoidance continuously scans nearby transponder signals and alters bearing if separation is under 50 meters.
+All mission telemetry logs must be encrypted and archived into flight recorder database partitions for regulatory inspection.
+Maintenance engineers receive automated component wear warnings when motor flight hours exceed 200 operational hours.
+Managerial dashboards summarize daily mission success rates, total fleet kilometers logged, and average parcel transit times.`;
+
     async function init() {
       // 1. Initialize ECharts instance
       const chartDom = document.getElementById('chart-container');
@@ -573,7 +621,7 @@ The system is supposed to print a business report for the manager every night au
         document.getElementById('status-hardware-text').textContent = "Localhost Offline";
       }
 
-      // 5. Load initial EarlyBird pipeline data
+      // 5. Load initial pipeline data
       await loadPipelineData();
 
       // 6. Fetch Snapshots List
@@ -605,7 +653,7 @@ The system is supposed to print a business report for the manager every night au
             setTimeout(() => chartInstance.resize(), 50);
           }
           if (t.id === 'export') {
-            renderMermaidDiagram(currentData ? currentData.components : []);
+            renderMermaidDiagram(currentData ? currentData.components : [], currentData ? currentData.edges : []);
           }
         });
       });
@@ -634,6 +682,12 @@ The system is supposed to print a business report for the manager every night au
         panelGraph.classList.add('hidden');
       });
 
+      // Synchronize Naming Mode between Tab 1 and Tab 2
+      const selectNaming1 = document.getElementById('select-naming-mode');
+      const selectNaming2 = document.getElementById('tab2-naming-mode');
+      selectNaming1.addEventListener('change', () => { selectNaming2.value = selectNaming1.value; });
+      selectNaming2.addEventListener('change', () => { selectNaming1.value = selectNaming2.value; });
+
       // Slider updates
       const rangeThreshold = document.getElementById('range-threshold');
       rangeThreshold.addEventListener('input', (e) => {
@@ -653,17 +707,32 @@ The system is supposed to print a business report for the manager every night au
       // Preset change
       const selectPreset = document.getElementById('select-preset');
       const customBox = document.getElementById('custom-input-box');
-      selectPreset.addEventListener('change', () => {
-        if (selectPreset.value === 'custom') {
-          customBox.classList.remove('hidden');
-        } else {
-          customBox.classList.add('hidden');
-        }
-      });
+      const inputReqs = document.getElementById('input-requirements');
+      const inputProj = document.getElementById('input-project-name');
 
-      // Load base requirements button
-      document.getElementById('btn-load-base-preset').addEventListener('click', () => {
-        document.getElementById('input-requirements').value = BASE_REQUIREMENTS_TEXT;
+      selectPreset.addEventListener('change', () => {
+        const val = selectPreset.value;
+        if (val === 'earlybird') {
+          customBox.classList.add('hidden');
+          inputProj.value = "EarlyBird";
+        } else if (val === 'earlybird_base') {
+          customBox.classList.remove('hidden');
+          inputReqs.value = BASE_REQUIREMENTS_TEXT;
+          inputProj.value = "EarlyBird Raw";
+        } else if (val === 'hospital') {
+          customBox.classList.remove('hidden');
+          inputReqs.value = HOSPITAL_REQUIREMENTS_TEXT;
+          inputProj.value = "Healthcare Care System";
+        } else if (val === 'drone') {
+          customBox.classList.remove('hidden');
+          inputReqs.value = DRONE_REQUIREMENTS_TEXT;
+          inputProj.value = "Autonomous Drone Fleet";
+        } else {
+          customBox.classList.remove('hidden');
+          if (!inputReqs.value.trim()) {
+            inputReqs.value = BASE_REQUIREMENTS_TEXT;
+          }
+        }
       });
 
       // Requirements filter
@@ -693,9 +762,10 @@ The system is supposed to print a business report for the manager every night au
       // Save Snapshot modal triggers
       const saveModal = document.getElementById('modal-save-snapshot');
       document.getElementById('btn-save-snapshot').addEventListener('click', () => {
+        const projName = document.getElementById('input-project-name').value.trim() || 'Architecture';
         const modelName = document.getElementById('select-model').value;
-        const isCustom = document.getElementById('select-preset').value === 'custom';
-        const defaultName = `${isCustom ? 'Base Raw' : 'Normalized'} (${modelName}) [${currentData ? currentData.components.length : 5}c]`;
+        const mode = document.getElementById('select-naming-mode').value;
+        const defaultName = `${projName} (${mode === 'archetype' ? 'Pattern' : 'Inferred'} • ${currentData ? currentData.components.length : 5}c)`;
         document.getElementById('input-snapshot-name').value = defaultName;
         saveModal.classList.remove('hidden');
       });
@@ -790,15 +860,15 @@ The system is supposed to print a business report for the manager every night au
             phaseEl.textContent = fastRecluster 
               ? "Partitioning vectors via similarity graph..." 
               : "Phase 1/3: Tokenizing & embedding requirements (Candle AVX2)...";
-            detailsEl.textContent = "Processing 44 high-dimensional vectors...";
+            detailsEl.textContent = "Processing high-dimensional vectors...";
           } else if (currentProgress < 70) {
             phaseEl.textContent = fastRecluster 
               ? "Running Louvain community modularity..." 
               : "Phase 2/3: Constructing HNSW graph & Qdrant topology...";
             detailsEl.textContent = "Calculating cosine similarity network...";
           } else {
-            phaseEl.textContent = "Phase 3/3: Extracting c-TF-IDF labels & 2D PCA projection...";
-            detailsEl.textContent = "Assigning architectural candidate roles...";
+            phaseEl.textContent = "Phase 3/3: Synthesizing components & PCA projection...";
+            detailsEl.textContent = "Extracting c-TF-IDF keywords & architectural roles...";
           }
         }
       }, stepInterval);
@@ -845,7 +915,7 @@ The system is supposed to print a business report for the manager every night au
           selectA.innerHTML = '';
           selectB.innerHTML = '';
 
-          list.forEach((snap, idx) => {
+          list.forEach((snap) => {
             const opt = document.createElement('option');
             opt.value = snap.id;
             opt.textContent = `${snap.name} (${snap.num_components}c • sil ${snap.silhouette.toFixed(2)})`;
@@ -1000,6 +1070,11 @@ The system is supposed to print a business report for the manager every night au
         fastRecluster
       );
 
+      const preset = document.getElementById('select-preset').value;
+      const customInput = preset === 'earlybird' ? null : document.getElementById('input-requirements').value;
+      const projName = document.getElementById('input-project-name').value.trim() || 'System';
+      const namingMode = document.getElementById('select-naming-mode').value;
+
       const payload = {
         model: document.getElementById('select-model').value,
         instruction: document.getElementById('chk-instruction').checked,
@@ -1007,9 +1082,9 @@ The system is supposed to print a business report for the manager every night au
         threshold: parseFloat(document.getElementById('range-threshold').value),
         target_k: parseInt(document.getElementById('range-k').value),
         fast_recluster: fastRecluster,
-        custom_input: document.getElementById('select-preset').value === 'custom'
-          ? document.getElementById('input-requirements').value
-          : null
+        custom_input: customInput,
+        naming_mode: namingMode,
+        project_name: projName
       };
 
       try {
@@ -1043,24 +1118,38 @@ The system is supposed to print a business report for the manager every night au
     }
 
     function renderAll(data) {
-      // 1. Update Metrics
+      // 1. Update Project Name Header and Avatar
+      const projName = data.project_name || "System";
+      document.getElementById('header-project-name').textContent = projName;
+      const initials = projName.split(/[\s_-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'SA';
+      document.getElementById('header-avatar').textContent = initials;
+      if (document.getElementById('input-project-name').value !== projName) {
+        document.getElementById('input-project-name').value = projName;
+      }
+      if (data.naming_mode) {
+        document.getElementById('select-naming-mode').value = data.naming_mode;
+        document.getElementById('tab2-naming-mode').value = data.naming_mode;
+      }
+
+      // 2. Update Metrics
       document.getElementById('metric-components').textContent = data.components.length;
       document.getElementById('metric-silhouette').textContent = data.silhouette.toFixed(3);
-      document.getElementById('metric-edges').textContent = `${data.pairs_count || 946}`;
+      document.getElementById('metric-edges').textContent = `${data.pairs_count || 0}`;
       document.getElementById('nav-comp-count').textContent = data.components.length;
       document.getElementById('comp-badge-header').textContent = `${data.components.length} Components`;
+      document.getElementById('req-count-badge').textContent = `${data.points.length} items`;
 
-      // 2. Tab 1: Render Requirements Table
+      // 3. Tab 1: Render Requirements Table
       renderRequirementsTable(data);
 
-      // 3. Tab 2: Render 2D Chart
+      // 4. Tab 2: Render 2D Chart
       renderChart(data);
 
-      // 4. Tab 3: Render Components Grid
+      // 5. Tab 3: Render Components Grid
       renderComponentsGrid(data);
 
-      // 5. Tab 4: Render Mermaid Diagram
-      renderMermaidDiagram(data.components);
+      // 6. Tab 4: Render Mermaid Diagram
+      renderMermaidDiagram(data.components, data.edges);
     }
 
     function renderRequirementsTable(data) {
@@ -1069,7 +1158,11 @@ The system is supposed to print a business report for the manager every night au
 
       const compMap = {};
       data.components.forEach((c, idx) => {
-        compMap[c.cluster_id] = { name: c.name, color: COLOR_PALETTE[idx % COLOR_PALETTE.length] };
+        compMap[c.cluster_id] = {
+          name: c.name,
+          archetype: c.archetype || 'Component',
+          color: COLOR_PALETTE[idx % COLOR_PALETTE.length]
+        };
       });
 
       data.points.forEach((p) => {
@@ -1077,7 +1170,7 @@ The system is supposed to print a business report for the manager every night au
         tr.className = "hover:bg-slate-900/80 transition req-row";
         tr.dataset.text = (p.id + " " + p.text).toLowerCase();
 
-        const comp = compMap[p.cluster_id] || { name: "Unknown", color: "#64748b" };
+        const comp = compMap[p.cluster_id] || { name: "Unknown", archetype: "Component", color: "#64748b" };
 
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-mono font-bold text-indigo-400">${p.id}</td>
@@ -1086,6 +1179,9 @@ The system is supposed to print a business report for the manager every night au
               <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${comp.color}"></span>
               ${comp.name}
             </span>
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium border border-slate-700">${comp.archetype}</span>
           </td>
           <td class="py-2.5 px-3 font-mono text-slate-400 text-[11px]">#[${p.source_ids.join(', ')}]</td>
           <td class="py-2.5 px-3 text-slate-200 leading-relaxed">${p.text}</td>
@@ -1152,7 +1248,7 @@ The system is supposed to print a business report for the manager every night au
               <div class="max-w-sm">
                 <div class="flex items-center justify-between pb-1 mb-1 border-b border-slate-700">
                   <span class="font-bold text-indigo-400 font-mono">${id}</span>
-                  <span class="text-[11px] text-slate-400">PDF #[${sources.join(', ')}]</span>
+                  <span class="text-[11px] text-slate-400">Ref #[${sources.join(', ')}]</span>
                 </div>
                 <div class="text-slate-200 mt-1 text-xs leading-relaxed">${text}</div>
                 <div class="text-[11px] text-indigo-300 font-semibold mt-2">${params.seriesName}</div>
@@ -1173,7 +1269,7 @@ The system is supposed to print a business report for the manager every night au
         },
         grid: {
           left: '4%',
-          right: '24%',
+          right: '25%',
           top: '6%',
           bottom: '6%'
         },
@@ -1202,7 +1298,7 @@ The system is supposed to print a business report for the manager every night au
           const inspectCard = document.getElementById('inspection-card');
           document.getElementById('inspect-id').textContent = id;
           document.getElementById('inspect-component').textContent = params.seriesName;
-          document.getElementById('inspect-source').textContent = `PDF #[${sources.join(', ')}]`;
+          document.getElementById('inspect-source').textContent = `Ref #[${sources.join(', ')}]`;
           document.getElementById('inspect-text').textContent = text;
           inspectCard.classList.remove('hidden');
         }
@@ -1228,13 +1324,18 @@ The system is supposed to print a business report for the manager every night au
           `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-indigo-300 border border-slate-800 mr-1 mb-1 inline-block">${rid}</span>`
         ).join('');
 
+        const archPill = comp.archetype ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">${comp.archetype}</span>` : '';
+
         card.innerHTML = `
           <div>
             <div class="flex items-start justify-between">
-              <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
-                C${comp.cluster_id + 1}: ${comp.name}
-              </h3>
+              <div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
+                  C${comp.cluster_id + 1}: ${comp.name}
+                </h3>
+                <div class="mt-1">${archPill}</div>
+              </div>
               <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 font-mono text-emerald-400 font-bold border border-slate-700" title="Internal Cluster Cohesion">
                 Cohesion: ${comp.cohesion.toFixed(2)}
               </span>
@@ -1243,7 +1344,7 @@ The system is supposed to print a business report for the manager every night au
             <p class="text-xs text-slate-300 mt-2.5 leading-relaxed">${comp.responsibility}</p>
 
             <div class="mt-3.5 pt-3 border-t border-slate-800/80">
-              <div class="text-[10px] uppercase font-bold text-slate-400 mb-1.5">Distinguishing Keywords:</div>
+              <div class="text-[10px] uppercase font-bold text-slate-400 mb-1.5">Distinguishing c-TF-IDF Keywords:</div>
               <div class="flex flex-wrap">${keywordsHtml}</div>
             </div>
 
@@ -1258,7 +1359,7 @@ The system is supposed to print a business report for the manager every night au
           <div class="mt-4 pt-3 border-t border-slate-800/80">
             <div class="flex items-center justify-between mb-1.5">
               <span class="text-[10px] uppercase font-bold text-slate-400">Allocated Requirements (${comp.requirement_ids.length}):</span>
-              <span class="text-[10px] text-slate-500 font-mono">PDF #[${comp.source_pdf_ids.join(', ')}]</span>
+              <span class="text-[10px] text-slate-500 font-mono">Ref #[${comp.source_pdf_ids.join(', ')}]</span>
             </div>
             <div class="flex flex-wrap">${reqListHtml}</div>
           </div>
@@ -1279,27 +1380,38 @@ The system is supposed to print a business report for the manager every night au
       });
     }
 
-    function renderMermaidDiagram(components) {
+    function renderMermaidDiagram(components, edges) {
       if (!components || components.length === 0) return;
 
       let code = "graph TD\n";
       code += "    classDef core fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;\n";
-      code += "    classDef adapter fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;\n\n";
+      code += "    classDef adapter fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;\n";
+      code += "    classDef repo fill:#3b1e54,stroke:#a855f7,stroke-width:2px,color:#fff;\n";
+      code += "    classDef policy fill:#701a75,stroke:#ec4899,stroke-width:2px,color:#fff;\n";
+      code += "    classDef analytics fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff;\n\n";
 
       components.forEach(comp => {
         const id = `C${comp.cluster_id + 1}`;
         const cleanName = comp.name.replace(/&/g, "and");
-        const isAdapter = comp.name.includes("SMS") || comp.name.includes("Payment") || comp.name.includes("Reporting");
-        const cls = isAdapter ? "adapter" : "core";
+        const arch = (comp.archetype || "").toLowerCase();
+        let cls = "core";
+        if (arch.includes("gateway") || arch.includes("adapter")) cls = "adapter";
+        else if (arch.includes("repository") || arch.includes("catalog")) cls = "repo";
+        else if (arch.includes("policy") || arch.includes("verification")) cls = "policy";
+        else if (arch.includes("analytics") || arch.includes("reporting")) cls = "analytics";
+
         code += `    ${id}["${id}: ${cleanName}"]:::${cls}\n`;
       });
 
-      // Semantic interactions between earlybird components
-      code += `\n    C3 -->|Places Order| C1\n`;
-      code += `    C3 -->|Cancels Order| C4\n`;
-      code += `    C1 -->|Verifies Account| C2\n`;
-      code += `    C1 -->|Assembled Order| C4\n`;
-      code += `    C4 -->|Completed Order| C5\n`;
+      // Render dynamic discovered edges based on cross-cluster vector coupling
+      if (edges && edges.length > 0) {
+        code += "\n";
+        edges.forEach(e => {
+          const idFrom = `C${e.from + 1}`;
+          const idTo = `C${e.to + 1}`;
+          code += `    ${idFrom} -.->|"${e.label}"| ${idTo}\n`;
+        });
+      }
 
       document.getElementById('mermaid-source-code').textContent = code;
 

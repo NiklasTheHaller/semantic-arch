@@ -14,7 +14,7 @@ use cluster::{
     adjusted_rand_index, cluster_via_louvain, find_best_k_agglomerative, silhouette_score,
 };
 use embed::{embed_requirements, ModelType};
-use label::label_clusters;
+use label::{label_clusters, NamingMode};
 use report::{generate_cluster_svg, generate_markdown_report};
 use requirements::load_requirements;
 use store::{
@@ -96,6 +96,12 @@ enum Commands {
 
         #[arg(short, long, default_value = "../out")]
         out_dir: PathBuf,
+
+        #[arg(long, default_value = "archetype")]
+        naming_mode: String,
+
+        #[arg(long, default_value = "EarlyBird")]
+        project_name: String,
     },
 
     /// Launches the interactive visual workbench web server
@@ -234,12 +240,15 @@ async fn main() -> Result<()> {
             collection,
             qdrant_url,
             out_dir,
+            naming_mode,
+            project_name,
         } => {
             let input = resolve_input_path(&input);
             let out_dir = resolve_out_dir(&out_dir);
+            let mode = NamingMode::from_str_opt(Some(&naming_mode));
 
             println!("============================================================");
-            println!("   EarlyBird Semantic Architecture Pipeline Starting");
+            println!("   Semantic Architecture Pipeline: {}", project_name);
             println!("============================================================");
 
             let model_type: ModelType = model.parse()?;
@@ -299,8 +308,8 @@ async fn main() -> Result<()> {
             let active_labels = graph_labels;
 
             // 6. Label Clusters & Architectural Components
-            println!("\n[6/6] Naming clusters, extracting c-TF-IDF keywords, and generating reports...");
-            let components = label_clusters(&cached.items, &active_labels, model_type)?;
+            println!("\n[6/6] Synthesizing components ({:?}), c-TF-IDF keywords, and reports...", mode);
+            let components = label_clusters(&cached.items, &active_labels, mode)?;
 
             // Update Qdrant point payloads with cluster assignments
             let mut payload_updates = Vec::new();
@@ -325,6 +334,7 @@ async fn main() -> Result<()> {
             generate_markdown_report(
                 &components,
                 &cached.items,
+                &project_name,
                 &model_type.to_string(),
                 graph_silhouette,
                 best_agglo_k,
@@ -335,7 +345,7 @@ async fn main() -> Result<()> {
 
             // Generate clusters.svg
             let report_svg_path = out_dir.join("clusters.svg");
-            generate_cluster_svg(&cached.items, &active_labels, &components, &report_svg_path)?;
+            generate_cluster_svg(&cached.items, &active_labels, &components, &project_name, &report_svg_path)?;
 
             println!("\n============================================================");
             println!("   Pipeline Finished Successfully!");
