@@ -1,9 +1,9 @@
 use anyhow::{Context, Result};
 use axum::{
-    extract::State,
+    extract::{Path as AxumPath, Query, State},
     http::{header, StatusCode, Uri},
     response::IntoResponse,
-    routing::{get, post},
+    routing::{delete, get, post},
     Json, Router,
 };
 use qdrant_client::Qdrant;
@@ -17,7 +17,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 use crate::cluster::{
     cluster_agglomerative, cluster_via_louvain,
-    metrics::{cosine_similarity, silhouette_score},
+    metrics::{adjusted_rand_index, cosine_similarity, silhouette_score},
 };
 use crate::embed::{embed_requirements, EmbeddedItem, ModelType};
 use crate::label::{
@@ -74,6 +74,67 @@ pub struct PipelineRunRequest {
     pub target_k: Option<usize>,
     pub fast_recluster: bool,
     pub custom_input: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RunSummary {
+    pub id: String,
+    pub name: String,
+    pub timestamp: String,
+    pub model: String,
+    pub instruction: bool,
+    pub method: String,
+    pub num_requirements: usize,
+    pub num_components: usize,
+    pub silhouette: f32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RunSnapshot {
+    pub id: String,
+    pub name: String,
+    pub timestamp: String,
+    pub model: String,
+    pub instruction: bool,
+    pub method: String,
+    pub num_requirements: usize,
+    pub num_components: usize,
+    pub silhouette: f32,
+    pub data: PipelineDataResponse,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SaveRunPayload {
+    pub name: String,
+    pub method: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CompareQuery {
+    pub run1: String,
+    pub run2: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RequirementShift {
+    pub id: String,
+    pub text: String,
+    pub cluster_1: String,
+    pub cluster_2: String,
+    pub changed: bool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CompareResult {
+    pub run1_id: String,
+    pub run1_name: String,
+    pub run2_id: String,
+    pub run2_name: String,
+    pub ari_score: f32,
+    pub total_count: usize,
+    pub identical_count: usize,
+    pub shifted_count: usize,
+    pub shifts: Vec<RequirementShift>,
 }
 
 pub struct PipelineSession {
@@ -158,6 +219,22 @@ pub async fn start_server(
     };
     let components = label_clusters_with_candidates(&items, &labels, &candidate_embeddings)?;
 
+    let initial_points: Vec<Point2D> = items
+        .iter()
+        .enumerate()
+        .map(|(i, it)| Point2D {
+            id: it.id.clone(),
+            text: it.text.clone(),
+            x: points_2d.get(i).map(|p| p.0).unwrap_or(0.0),
+            y: points_2d.get(i).map(|p| p.1).unwrap_or(0.0),
+            cluster_id: labels.get(i).copied().unwrap_or(0),
+            source_ids: it.source_ids.clone(),
+        })
+        .collect();
+    let initial_components = components.clone();
+    let initial_pairs_count = pairs.len();
+    let initial_num_items = items.len();
+
     // 5. Test Qdrant connectivity
     println!("Testing Qdrant vector database connectivity...");
     let (qdrant_client, qdrant_address) = match connect_qdrant(None).await {
@@ -201,9 +278,50 @@ pub async fn start_server(
         .route("/api/pipeline/run", post(run_pipeline))
         .route("/api/export/markdown", get(export_markdown))
         .route("/api/export/svg", get(export_svg))
+        .route("/api/runs", get(list_runs))
+        .route("/api/runs/save", post(save_run))
+        .route("/api/runs/load/{id}", post(load_run))
+        .route("/api/runs/{id}", delete(delete_run))
+        .route("/api/runs/compare", get(compare_runs))
         .fallback(static_handler)
         .layer(cors)
-        .with_state(app_state);
+        .with_state(app_state.clone());
+
+    // Auto-seed initial baseline run if runs folder is empty
+    let runs_dir = out_dir.join("runs");
+    let _ = std::fs::create_dir_all(&runs_dir);
+    let is_runs_empty = std::fs::read_dir(&runs_dir)
+        .map(|mut d| d.next().is_none())
+        .unwrap_or(true);
+
+    if is_runs_empty {
+        let now_secs = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+
+        let base_snapshot = RunSnapshot {
+            id: format!("baseline_{}", now_secs),
+            name: "Baseline: Normalized (Qwen3-0.6B + Instruct)".to_string(),
+            timestamp: format!("{}", now_secs),
+            model: "qwen3-0.6b".to_string(),
+            instruction: true,
+            method: "graph".to_string(),
+            num_requirements: initial_num_items,
+            num_components: initial_components.len(),
+            silhouette,
+            data: PipelineDataResponse {
+                points: initial_points,
+                components: initial_components,
+                silhouette,
+                pairs_count: initial_pairs_count,
+            },
+        };
+
+        if let Ok(json_str) = serde_json::to_string_pretty(&base_snapshot) {
+            let _ = std::fs::write(runs_dir.join(format!("{}.json", base_snapshot.id)), json_str);
+        }
+    }
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     let listener = tokio::net::TcpListener::bind(addr).await
@@ -535,4 +653,228 @@ async fn static_handler(uri: Uri) -> impl IntoResponse {
             }
         }
     }
+}
+
+async fn list_runs(State(state): State<AppState>) -> Json<Vec<RunSummary>> {
+    let runs_dir = state.out_dir.join("runs");
+    let mut list = Vec::new();
+    if let Ok(entries) = std::fs::read_dir(&runs_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().and_then(|e| e.to_str()) == Some("json") {
+                if let Ok(content) = std::fs::read_to_string(&path) {
+                    if let Ok(snap) = serde_json::from_str::<RunSnapshot>(&content) {
+                        list.push(RunSummary {
+                            id: snap.id,
+                            name: snap.name,
+                            timestamp: snap.timestamp,
+                            model: snap.model,
+                            instruction: snap.instruction,
+                            method: snap.method,
+                            num_requirements: snap.num_requirements,
+                            num_components: snap.num_components,
+                            silhouette: snap.silhouette,
+                        });
+                    }
+                }
+            }
+        }
+    }
+    // Sort descending by id
+    list.sort_by(|a, b| b.id.cmp(&a.id));
+    Json(list)
+}
+
+async fn save_run(
+    State(state): State<AppState>,
+    Json(payload): Json<SaveRunPayload>,
+) -> Result<Json<RunSnapshot>, (StatusCode, String)> {
+    let session = state.session.read().await;
+
+    let runs_dir = state.out_dir.join("runs");
+    std::fs::create_dir_all(&runs_dir)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    let now_secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+
+    let id = format!("run_{}", now_secs);
+
+    let points: Vec<Point2D> = session
+        .items
+        .iter()
+        .enumerate()
+        .map(|(i, it)| Point2D {
+            id: it.id.clone(),
+            text: it.text.clone(),
+            x: session.points_2d.get(i).map(|p| p.0).unwrap_or(0.0),
+            y: session.points_2d.get(i).map(|p| p.1).unwrap_or(0.0),
+            cluster_id: session.labels.get(i).copied().unwrap_or(0),
+            source_ids: it.source_ids.clone(),
+        })
+        .collect();
+
+    let data = PipelineDataResponse {
+        points,
+        components: session.components.clone(),
+        silhouette: session.silhouette,
+        pairs_count: session.pairs.len(),
+    };
+
+    let snapshot = RunSnapshot {
+        id: id.clone(),
+        name: if payload.name.trim().is_empty() {
+            format!("Run ({})", session.model_type)
+        } else {
+            payload.name
+        },
+        timestamp: format!("{}", now_secs),
+        model: session.model_type.to_string(),
+        instruction: session.instruction,
+        method: payload.method.unwrap_or_else(|| "graph".to_string()),
+        num_requirements: session.items.len(),
+        num_components: session.components.len(),
+        silhouette: session.silhouette,
+        data,
+    };
+
+    let file_path = runs_dir.join(format!("{}.json", id));
+    let json_str = serde_json::to_string_pretty(&snapshot)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    std::fs::write(&file_path, json_str)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    Ok(Json(snapshot))
+}
+
+async fn load_run(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<String>,
+) -> Result<Json<PipelineDataResponse>, (StatusCode, String)> {
+    let runs_dir = state.out_dir.join("runs");
+    let file_path = runs_dir.join(format!("{}.json", id));
+    if !file_path.exists() {
+        return Err((StatusCode::NOT_FOUND, "Snapshot not found".to_string()));
+    }
+    let content = std::fs::read_to_string(&file_path)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    let snap: RunSnapshot = serde_json::from_str(&content)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    let mut session = state.session.write().await;
+    session.components = snap.data.components.clone();
+    session.silhouette = snap.data.silhouette;
+    session.labels = snap.data.points.iter().map(|p| p.cluster_id).collect();
+    session.points_2d = snap.data.points.iter().map(|p| (p.x, p.y)).collect();
+
+    // Sync items text/id if point counts match
+    if session.items.len() == snap.data.points.len() {
+        for (i, p) in snap.data.points.iter().enumerate() {
+            session.items[i].id = p.id.clone();
+            session.items[i].text = p.text.clone();
+            session.items[i].source_ids = p.source_ids.clone();
+        }
+    }
+
+    Ok(Json(snap.data))
+}
+
+async fn delete_run(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<String>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    let file_path = state.out_dir.join("runs").join(format!("{}.json", id));
+    if file_path.exists() {
+        std::fs::remove_file(&file_path)
+            .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    }
+    Ok(StatusCode::NO_CONTENT)
+}
+
+async fn compare_runs(
+    State(state): State<AppState>,
+    Query(query): Query<CompareQuery>,
+) -> Result<Json<CompareResult>, (StatusCode, String)> {
+    let runs_dir = state.out_dir.join("runs");
+    let path1 = runs_dir.join(format!("{}.json", query.run1));
+    let path2 = runs_dir.join(format!("{}.json", query.run2));
+
+    let content1 = std::fs::read_to_string(&path1)
+        .map_err(|_| (StatusCode::NOT_FOUND, format!("Run 1 '{}' not found", query.run1)))?;
+    let content2 = std::fs::read_to_string(&path2)
+        .map_err(|_| (StatusCode::NOT_FOUND, format!("Run 2 '{}' not found", query.run2)))?;
+
+    let snap1: RunSnapshot = serde_json::from_str(&content1)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    let snap2: RunSnapshot = serde_json::from_str(&content2)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    // Create maps from requirement ID to component name
+    let comp_map1: std::collections::HashMap<usize, String> = snap1
+        .data
+        .components
+        .iter()
+        .map(|c| (c.cluster_id, c.name.clone()))
+        .collect();
+    let comp_map2: std::collections::HashMap<usize, String> = snap2
+        .data
+        .components
+        .iter()
+        .map(|c| (c.cluster_id, c.name.clone()))
+        .collect();
+
+    let mut map1_by_req: std::collections::HashMap<String, (usize, String, String)> = std::collections::HashMap::new();
+    for p in &snap1.data.points {
+        let comp_name = comp_map1.get(&p.cluster_id).cloned().unwrap_or_else(|| "Unknown".into());
+        map1_by_req.insert(p.id.clone(), (p.cluster_id, comp_name, p.text.clone()));
+    }
+
+    let mut labels1 = Vec::new();
+    let mut labels2 = Vec::new();
+    let mut shifts = Vec::new();
+    let mut identical_count = 0;
+    let mut shifted_count = 0;
+
+    for p2 in &snap2.data.points {
+        if let Some((c1_id, c1_name, text)) = map1_by_req.get(&p2.id) {
+            let c2_name = comp_map2.get(&p2.cluster_id).cloned().unwrap_or_else(|| "Unknown".into());
+            labels1.push(*c1_id);
+            labels2.push(p2.cluster_id);
+
+            let changed = c1_name != &c2_name;
+            if changed {
+                shifted_count += 1;
+            } else {
+                identical_count += 1;
+            }
+
+            shifts.push(RequirementShift {
+                id: p2.id.clone(),
+                text: text.clone(),
+                cluster_1: c1_name.clone(),
+                cluster_2: c2_name,
+                changed,
+            });
+        }
+    }
+
+    let ari_score = if labels1.len() == labels2.len() && !labels1.is_empty() {
+        adjusted_rand_index(&labels1, &labels2)
+    } else {
+        0.0
+    };
+
+    Ok(Json(CompareResult {
+        run1_id: snap1.id,
+        run1_name: snap1.name,
+        run2_id: snap2.id,
+        run2_name: snap2.name,
+        ari_score,
+        total_count: shifts.len(),
+        identical_count,
+        shifted_count,
+        shifts,
+    }))
 }
