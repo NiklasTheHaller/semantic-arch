@@ -324,8 +324,18 @@ DR-39
 <circle cx="599" cy="546" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
 <circle cx="599" cy="628" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
 <circle cx="595" cy="353" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="520" cy="340" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="631" cy="347" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="716" cy="460" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="603" cy="421" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="691" cy="436" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="757" cy="425" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
 <circle cx="584" cy="475" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
 <circle cx="549" cy="462" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="596" cy="394" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="635" cy="363" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="525" cy="365" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="635" cy="448" r="6" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
 <text x="641" y="436" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
 FR-08
 </text>
@@ -344,13 +354,42 @@ DR-11b
 <text x="597" y="352" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
 DR-17a
 </text>
+<text x="521" y="339" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-17b
+</text>
+<text x="633" y="346" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-27
+</text>
+<text x="718" y="459" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-28
+</text>
+<text x="605" y="420" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+DR-29
+</text>
+<text x="693" y="435" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+DR-30
+</text>
+<text x="759" y="424" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+DR-31
+</text>
 <text x="586" y="474" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
 FR-34a
 </text>
 <text x="550" y="461" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
 FR-35
 </text>
-<circle cx="520" cy="340" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
+<text x="597" y="393" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-37a
+</text>
+<text x="636" y="362" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+DR-37b
+</text>
+<text x="526" y="365" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-40
+</text>
+<text x="637" y="447" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#FF7F0E">
+FR-41
+</text>
 <circle cx="468" cy="241" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="240" cy="241" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="368" cy="290" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
@@ -360,13 +399,9 @@ FR-35
 <circle cx="499" cy="235" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="295" cy="193" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="352" cy="346" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
-<circle cx="631" cy="347" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="324" cy="308" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="287" cy="288" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 <circle cx="270" cy="200" r="6" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
-<text x="521" y="339" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
-FR-17b
-</text>
 <text x="470" y="240" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
 FR-18
 </text>
@@ -394,9 +429,6 @@ FR-25
 <text x="353" y="345" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
 FR-26
 </text>
-<text x="633" y="346" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
-FR-27
-</text>
 <text x="326" y="307" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
 DR-42
 </text>
@@ -406,58 +438,18 @@ FR-43
 <text x="272" y="199" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#2CA02C">
 FR-44
 </text>
-<circle cx="716" cy="460" r="6" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<circle cx="603" cy="421" r="6" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<circle cx="691" cy="436" r="6" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<circle cx="757" cy="425" r="6" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<circle cx="635" cy="448" r="6" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<text x="718" y="459" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#D62728">
-FR-28
+<rect x="757" y="55" width="318" height="60" opacity="0.85" fill="#FFFFFF" stroke="none"/>
+<rect x="757" y="55" width="318" height="60" opacity="0.2" fill="none" stroke="#000000"/>
+<text x="797" y="65" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+C1: Products &amp; Product Catalog &amp; Repository
 </text>
-<text x="605" y="420" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#D62728">
-DR-29
+<text x="797" y="80" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+C2: Order &amp; Customer Workflow &amp; Lifecycle Manager
 </text>
-<text x="693" y="435" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#D62728">
-DR-30
+<text x="797" y="95" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
+C3: Clerk &amp; Order Workflow &amp; Lifecycle Manager
 </text>
-<text x="759" y="424" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#D62728">
-DR-31
-</text>
-<text x="637" y="447" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#D62728">
-FR-41
-</text>
-<circle cx="596" cy="394" r="6" opacity="1" fill="#9467BD" stroke="none" stroke-width="1"/>
-<circle cx="635" cy="363" r="6" opacity="1" fill="#9467BD" stroke="none" stroke-width="1"/>
-<circle cx="525" cy="365" r="6" opacity="1" fill="#9467BD" stroke="none" stroke-width="1"/>
-<text x="597" y="393" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#9467BD">
-FR-37a
-</text>
-<text x="636" y="362" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#9467BD">
-DR-37b
-</text>
-<text x="526" y="365" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="8.064516129032258" opacity="1" fill="#9467BD">
-FR-40
-</text>
-<rect x="735" y="55" width="340" height="90" opacity="0.85" fill="#FFFFFF" stroke="none"/>
-<rect x="735" y="55" width="340" height="90" opacity="0.2" fill="none" stroke="#000000"/>
-<text x="775" y="65" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C1: Product &amp; Products Catalog &amp; Repository
-</text>
-<text x="775" y="80" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C2: Customer &amp; Delivery Workflow &amp; Lifecycle Manager
-</text>
-<text x="775" y="95" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C3: Order &amp; Clerk Workflow &amp; Lifecycle Manager
-</text>
-<text x="775" y="110" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C4: Order &amp; Cancellation Workflow &amp; Lifecycle Manager
-</text>
-<text x="775" y="125" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C5: SMS &amp; Containing Integration Gateway
-</text>
-<circle cx="755" cy="70" r="5" opacity="1" fill="#1F77B4" stroke="none" stroke-width="1"/>
-<circle cx="755" cy="85" r="5" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
-<circle cx="755" cy="100" r="5" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
-<circle cx="755" cy="115" r="5" opacity="1" fill="#D62728" stroke="none" stroke-width="1"/>
-<circle cx="755" cy="130" r="5" opacity="1" fill="#9467BD" stroke="none" stroke-width="1"/>
+<circle cx="777" cy="70" r="5" opacity="1" fill="#1F77B4" stroke="none" stroke-width="1"/>
+<circle cx="777" cy="85" r="5" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>
+<circle cx="777" cy="100" r="5" opacity="1" fill="#2CA02C" stroke="none" stroke-width="1"/>
 </svg>

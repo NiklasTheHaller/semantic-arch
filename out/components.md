@@ -17,11 +17,9 @@ Each cluster forms a cohesive **application core component** (or adapter boundar
 
 | Cluster | Component Name | Cohesion | Requirements | Original PDF IDs | Distinguishing Keywords |
 |---|---|---|---|---|---|
-| **C1** | **Product & Products Catalog & Repository** | 0.75 | 14 reqs | 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 36, 38, 39 | `product, products, order, breakfast, prepackaged` |
-| **C2** | **Customer & Delivery Workflow & Lifecycle Manager** | 0.78 | 8 reqs | 8, 9, 10, 11, 17, 34, 35 | `customer, delivery, clerk, blacklisted, digit` |
-| **C3** | **Order & Clerk Workflow & Lifecycle Manager** | 0.80 | 14 reqs | 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 42, 43, 44 | `order, clerk, delivery, invoice, shows` |
-| **C4** | **Order & Cancellation Workflow & Lifecycle Manager** | 0.87 | 5 reqs | 28, 29, 30, 31, 41 | `order, cancellation, cancels, places, receives` |
-| **C5** | **SMS & Containing Integration Gateway** | 0.90 | 3 reqs | 37, 40 | `sms, containing, text, order, message` |
+| **C1** | **Products & Product Catalog & Repository** | 0.75 | 14 reqs | 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 36, 38, 39 | `products, product, order, breakfast, blueprint` |
+| **C2** | **Order & Customer Workflow & Lifecycle Manager** | 0.77 | 18 reqs | 8, 9, 10, 11, 17, 27, 28, 29, 30, 31, 34, 35, 37, 40, 41 | `order, customer, delivery, clerk, sms` |
+| **C3** | **Clerk & Order Workflow & Lifecycle Manager** | 0.80 | 12 reqs | 18, 19, 21, 22, 23, 24, 25, 26, 42, 43, 44 | `clerk, order, delivery, invoice, prints` |
 
 ---
 
@@ -31,8 +29,8 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 | Clustering Method | Number of Clusters ($k$) | Mean Silhouette Score | Algorithm Notes |
 |---|---|---|---|
-| **Qdrant Distance Matrix + Louvain (Primary)** | **5** | **0.158** | Emergent modularity on HNSW kNN topology |
-| **Agglomerative (Average Linkage)** | **5** | **0.158** | Global average-linkage tree cut at optimal $k$ |
+| **Qdrant Distance Matrix + Louvain (Primary)** | **3** | **0.157** | Emergent modularity on HNSW kNN topology |
+| **Agglomerative (Average Linkage)** | **3** | **0.157** | Global average-linkage tree cut at optimal $k$ |
 
 **Adjusted Rand Index (ARI) between methods: `1.000`** (indicates strong structural alignment across differing clustering mechanics).
 
@@ -40,11 +38,11 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 ## 3. Detailed Component Specifications
 
-### Component 1: Product & Products Catalog & Repository
+### Component 1: Products & Product Catalog & Repository
 
 - **Primary Responsibility:** Persistent entity storage, catalog definition, inventory indexing, and structured lookup queries. Encapsulates 14 requirements (e.g. [FR-14]: "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.").
 - **Internal Cohesion Score:** `0.75`
-- **Semantic Keywords:** `product, products, order, breakfast, prepackaged`
+- **Semantic Keywords:** `products, product, order, breakfast, blueprint`
 - **Architectural Archetype:** `Repository`
 - **Representative Medoid Requirement:** `[FR-14]` *"The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order."*
 
@@ -67,11 +65,11 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 | `FR-14` | functional | 14 | The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order. |
 | `FR-36` | functional | 36 | The system offers a public product search that anyone can use without logging in. |
 
-### Component 2: Customer & Delivery Workflow & Lifecycle Manager
+### Component 2: Order & Customer Workflow & Lifecycle Manager
 
-- **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 8 requirements (e.g. [FR-08]: "The system identifies the customer by the customer number when the customer starts placing an order.").
-- **Internal Cohesion Score:** `0.78`
-- **Semantic Keywords:** `customer, delivery, clerk, blacklisted, digit`
+- **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 18 requirements (e.g. [FR-08]: "The system identifies the customer by the customer number when the customer starts placing an order.").
+- **Internal Cohesion Score:** `0.77`
+- **Semantic Keywords:** `order, customer, delivery, clerk, sms`
 - **Architectural Archetype:** `Manager`
 - **Representative Medoid Requirement:** `[FR-08]` *"The system identifies the customer by the customer number when the customer starts placing an order."*
 
@@ -83,16 +81,26 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 | `DR-10` | domain-rule | 10 | An order always belongs to exactly one customer; the system does not support collective orders of several customers. |
 | `DR-11b` | domain-rule | 11 | During authentication the system checks that the customer is not blacklisted (e.g. due to bad payment morale) and rejects blacklisted customers. |
 | `DR-17a` | domain-rule | 17 | Each customer has exactly one predefined address, which the system uses automatically as the delivery address of her orders. |
+| `DR-29` | domain-rule | 29 | The system rejects the cancellation of an order that has already been assembled by the packing clerk. |
+| `DR-30` | domain-rule | 30 | A cancelled order cannot be reactivated; cancellation is final. |
+| `DR-31` | domain-rule | 31 | The system does not allow changes to a placed order; to change it, the customer cancels the order and places a new one. |
+| `DR-37b` | domain-rule | 37 | The system parses an SMS order message containing the customer number (C), the password (W) and one or more product codes with amounts (P). |
 | `FR-08` | functional | 8 | The system identifies the customer by the customer number when the customer starts placing an order. |
 | `FR-11a` | functional | 11 | The system authenticates the customer before an order can be placed. |
+| `FR-17b` | functional | 17 | When an order is placed, the system assigns an order number with eight digits and a checksum and shows it to the customer. |
+| `FR-27` | functional | 27 | The system lets the customer look up the status of her order by order number and shows whether the order is already out for delivery. |
+| `FR-28` | functional | 28 | The system lets the customer cancel an order by its order number. |
 | `FR-34a` | functional | 34 | The system authorises users according to their role: customer, packing clerk, delivery clerk or manager. |
 | `FR-35` | functional | 35 | The system lets the customer confirm the delivery of her order by entering her password in a browser on the delivery clerk's smartphone. |
+| `FR-37a` | functional | 37 | The system accepts orders sent by customers as SMS text messages to the company number. |
+| `FR-40` | functional | 40 | The system replies to an SMS order with a text message containing the assigned order number. |
+| `FR-41` | functional | 41 | The system cancels an order when it receives an SMS cancellation message containing the order number (O). |
 
-### Component 3: Order & Clerk Workflow & Lifecycle Manager
+### Component 3: Clerk & Order Workflow & Lifecycle Manager
 
-- **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 14 requirements (e.g. [FR-25]: "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.").
+- **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 12 requirements (e.g. [FR-25]: "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.").
 - **Internal Cohesion Score:** `0.80`
-- **Semantic Keywords:** `order, clerk, delivery, invoice, shows`
+- **Semantic Keywords:** `clerk, order, delivery, invoice, prints`
 - **Architectural Archetype:** `Manager`
 - **Representative Medoid Requirement:** `[FR-25]` *"The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver."*
 
@@ -102,7 +110,6 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 |---|---|---|---|
 | `DR-23` | domain-rule | 23 | Each printed copy of an invoice gets its own invoice number. |
 | `DR-42` | domain-rule | 42 | An expected-payment record for the external payment system contains the customer number, the order number, the amount in Euros and the expected payment date. |
-| `FR-17b` | functional | 17 | When an order is placed, the system assigns an order number with eight digits and a checksum and shows it to the customer. |
 | `FR-18` | functional | 18 | The system shows the packing clerk each placed order so that she can assemble the ordered products into a paper bag. |
 | `FR-19a` | functional | 19 | The system prints a label for the order bag showing the packing clerk's name, the customer's first name, surname and address, and the order number. |
 | `FR-19b` | functional | 19 | The system lets the packing clerk assign a delivery clerk to the order, and the label shows the assigned delivery clerk. |
@@ -111,43 +118,8 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 | `FR-24` | functional | 24 | The system calculates the optimal delivery itinerary for a delivery clerk, covering several orders in one itinerary. |
 | `FR-25` | functional | 25 | The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver. |
 | `FR-26` | functional | 26 | The customer confirms receipt of the delivered order; one invoice copy stays with the customer as her receipt. |
-| `FR-27` | functional | 27 | The system lets the customer look up the status of her order by order number and shows whether the order is already out for delivery. |
 | `FR-43` | functional | 43 | When the packing clerk has finished assembling an order, the system sends an expected-payment record to the external payment system. |
 | `FR-44` | functional | 44 | Every night the system automatically prints a business report for the manager listing all orders of the day with products, amounts, packing clerk, delivery clerk, customer, customer address and order number. |
-
-### Component 4: Order & Cancellation Workflow & Lifecycle Manager
-
-- **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 5 requirements (e.g. [FR-28]: "The system lets the customer cancel an order by its order number.").
-- **Internal Cohesion Score:** `0.87`
-- **Semantic Keywords:** `order, cancellation, cancels, places, receives`
-- **Architectural Archetype:** `Manager`
-- **Representative Medoid Requirement:** `[FR-28]` *"The system lets the customer cancel an order by its order number."*
-
-#### Allocated Requirements
-
-| Req ID | Kind | PDF # | Requirement Text |
-|---|---|---|---|
-| `DR-29` | domain-rule | 29 | The system rejects the cancellation of an order that has already been assembled by the packing clerk. |
-| `DR-30` | domain-rule | 30 | A cancelled order cannot be reactivated; cancellation is final. |
-| `DR-31` | domain-rule | 31 | The system does not allow changes to a placed order; to change it, the customer cancels the order and places a new one. |
-| `FR-28` | functional | 28 | The system lets the customer cancel an order by its order number. |
-| `FR-41` | functional | 41 | The system cancels an order when it receives an SMS cancellation message containing the order number (O). |
-
-### Component 5: SMS & Containing Integration Gateway
-
-- **Primary Responsibility:** External protocol adaptation, message ingestion, format translation, and third-party integration. Encapsulates 3 requirements (e.g. [FR-37a]: "The system accepts orders sent by customers as SMS text messages to the company number.").
-- **Internal Cohesion Score:** `0.90`
-- **Semantic Keywords:** `sms, containing, text, order, message`
-- **Architectural Archetype:** `Gateway`
-- **Representative Medoid Requirement:** `[FR-37a]` *"The system accepts orders sent by customers as SMS text messages to the company number."*
-
-#### Allocated Requirements
-
-| Req ID | Kind | PDF # | Requirement Text |
-|---|---|---|---|
-| `DR-37b` | domain-rule | 37 | The system parses an SMS order message containing the customer number (C), the password (W) and one or more product codes with amounts (P). |
-| `FR-37a` | functional | 37 | The system accepts orders sent by customers as SMS text messages to the company number. |
-| `FR-40` | functional | 40 | The system replies to an SMS order with a text message containing the assigned order number. |
 
 ---
 
@@ -155,28 +127,18 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 Semantic clustering groups requirements by **semantic cohesion** (what belongs together). In this architecture proposal, the discovered components map to distinct architectural boundaries:
 
-### Product & Products Catalog & Repository (Repository)
+### Products & Product Catalog & Repository (Repository)
 - **Boundary Role:** Persistent entity storage, catalog definition, inventory indexing, and structured lookup queries. Encapsulates 14 requirements (e.g. [FR-14]: "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.").
 - **Central Anchor Requirement [FR-14]:** "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order."
 - **Internal Cohesion:** `0.75` across 14 allocated requirements
 
-### Customer & Delivery Workflow & Lifecycle Manager (Manager)
-- **Boundary Role:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 8 requirements (e.g. [FR-08]: "The system identifies the customer by the customer number when the customer starts placing an order.").
+### Order & Customer Workflow & Lifecycle Manager (Manager)
+- **Boundary Role:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 18 requirements (e.g. [FR-08]: "The system identifies the customer by the customer number when the customer starts placing an order.").
 - **Central Anchor Requirement [FR-08]:** "The system identifies the customer by the customer number when the customer starts placing an order."
-- **Internal Cohesion:** `0.78` across 8 allocated requirements
+- **Internal Cohesion:** `0.77` across 18 allocated requirements
 
-### Order & Clerk Workflow & Lifecycle Manager (Manager)
-- **Boundary Role:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 14 requirements (e.g. [FR-25]: "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.").
+### Clerk & Order Workflow & Lifecycle Manager (Manager)
+- **Boundary Role:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 12 requirements (e.g. [FR-25]: "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.").
 - **Central Anchor Requirement [FR-25]:** "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver."
-- **Internal Cohesion:** `0.80` across 14 allocated requirements
-
-### Order & Cancellation Workflow & Lifecycle Manager (Manager)
-- **Boundary Role:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 5 requirements (e.g. [FR-28]: "The system lets the customer cancel an order by its order number.").
-- **Central Anchor Requirement [FR-28]:** "The system lets the customer cancel an order by its order number."
-- **Internal Cohesion:** `0.87` across 5 allocated requirements
-
-### SMS & Containing Integration Gateway (Gateway)
-- **Boundary Role:** External protocol adaptation, message ingestion, format translation, and third-party integration. Encapsulates 3 requirements (e.g. [FR-37a]: "The system accepts orders sent by customers as SMS text messages to the company number.").
-- **Central Anchor Requirement [FR-37a]:** "The system accepts orders sent by customers as SMS text messages to the company number."
-- **Internal Cohesion:** `0.90` across 3 allocated requirements
+- **Internal Cohesion:** `0.80` across 12 allocated requirements
 
