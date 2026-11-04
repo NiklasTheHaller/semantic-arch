@@ -155,6 +155,7 @@ pub struct PipelineSession {
     pub instruction: bool,
     pub naming_mode: NamingMode,
     pub project_name: String,
+    pub active_dataset: String,
     pub items: Vec<EmbeddedItem>,
     pub components: Vec<ClusterComponent>,
     pub edges: Vec<ComponentEdge>,
@@ -183,19 +184,12 @@ pub async fn start_server(
     println!("\nInitializing Semantic Architecture Workbench session...");
 
     let model_type = ModelType::Qwen3_06B;
-    let cache_file = out_dir.join(format!("embeddings.{}.json", model_type));
+    let cache_file = out_dir.join(format!("embeddings.normalized.{}.json", model_type));
 
-    // 1. Load or compute requirements embeddings
-    let cached = if cache_file.exists() {
-        println!("Loading cached embeddings from {:?}", cache_file);
-        let content = std::fs::read_to_string(&cache_file)?;
-        let data: crate::embed::CachedEmbeddings = serde_json::from_str(&content)?;
-        data
-    } else {
-        println!("Computing initial embeddings for {:?}", input_path);
-        let reqs = load_requirements(&input_path)?;
-        embed_requirements(&reqs, model_type, true, &cache_file)?
-    };
+    // 1. Load normalized requirements and verified cache
+    println!("Loading normalized requirements from {:?}", input_path);
+    let reqs = load_requirements(&input_path)?;
+    let cached = embed_requirements(&reqs, model_type, true, &cache_file)?;
 
     let items = cached.items;
     let embeddings: Vec<Vec<f32>> = items.iter().map(|it| it.embedding.clone()).collect();
@@ -257,6 +251,7 @@ pub async fn start_server(
         instruction: true,
         naming_mode,
         project_name: project_name.clone(),
+        active_dataset: "normalized".to_string(),
         items,
         components,
         edges,
@@ -466,24 +461,23 @@ async fn run_pipeline(
         .parse::<ModelType>()
         .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
 
+    let (is_custom, dataset_key) = match payload.custom_input {
+        Some(ref raw) if !raw.trim().is_empty() => (true, format!("custom_{}", raw.trim().len())),
+        _ => (false, "normalized".to_string()),
+    };
+
     let need_reembed = !payload.fast_recluster
         || session.model_type != target_model
         || session.instruction != payload.instruction
-        || payload.custom_input.is_some();
+        || session.active_dataset != dataset_key;
 
     if need_reembed {
-        // Parse custom input or default requirements
-        let reqs = if let Some(ref raw) = payload.custom_input {
-            let trimmed = raw.trim();
-            if trimmed.is_empty() {
-                load_requirements(&state.input_path)
-                    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-            } else if let Ok(parsed) = serde_yaml::from_str::<Vec<Requirement>>(trimmed) {
+        let (reqs, cache_file) = if is_custom {
+            let raw = payload.custom_input.as_deref().unwrap_or("").trim();
+            let parsed_reqs = if let Ok(parsed) = serde_yaml::from_str::<Vec<Requirement>>(raw) {
                 parsed
             } else {
-                // Parse line by line
-                trimmed
-                    .lines()
+                raw.lines()
                     .filter(|l| !l.trim().is_empty())
                     .enumerate()
                     .map(|(idx, line)| Requirement {
@@ -491,22 +485,28 @@ async fn run_pipeline(
                         source_ids: vec![idx as u32 + 1],
                         section: "Custom Requirements".to_string(),
                         kind: "functional".to_string(),
-                        text: line.trim().trim_start_matches(|c: char| c == '-' || c == '*' || c == '.' || c.is_numeric()).trim().to_string(),
+                        text: line
+                            .trim()
+                            .trim_start_matches(|c: char| c == '-' || c == '*' || c == '.' || c.is_numeric())
+                            .trim()
+                            .to_string(),
                     })
                     .collect()
-            }
+            };
+            (parsed_reqs, state.out_dir.join(format!("embeddings.custom.{}.json", target_model)))
         } else {
-            load_requirements(&state.input_path)
-                .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
+            let norm_reqs = load_requirements(&state.input_path)
+                .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+            (norm_reqs, state.out_dir.join(format!("embeddings.normalized.{}.json", target_model)))
         };
 
-        let cache_file = state.out_dir.join(format!("embeddings.{}.json", target_model));
         let cached = embed_requirements(&reqs, target_model, payload.instruction, &cache_file)
             .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
         session.items = cached.items;
         session.model_type = target_model;
         session.instruction = payload.instruction;
+        session.active_dataset = dataset_key;
 
         // Recompute pairwise similarity matrix
         let embeddings: Vec<Vec<f32>> = session.items.iter().map(|it| it.embedding.clone()).collect();

@@ -17,11 +17,11 @@ Each cluster forms a cohesive **application core component** (or adapter boundar
 
 | Cluster | Component Name | Cohesion | Requirements | Original PDF IDs | Distinguishing Keywords |
 |---|---|---|---|---|---|
-| **C1** | **Product & Products Catalog & Repository** | 0.75 | 14 reqs | 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 36, 38, 39 | `product, products, order, blueprint, cart` |
-| **C2** | **Customer & Delivery Workflow & Lifecycle Manager** | 0.78 | 8 reqs | 8, 9, 10, 11, 17, 34, 35 | `customer, delivery, clerk, exactly, blacklisted` |
+| **C1** | **Product & Products Catalog & Repository** | 0.75 | 14 reqs | 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 36, 38, 39 | `product, products, order, breakfast, prepackaged` |
+| **C2** | **Customer & Delivery Workflow & Lifecycle Manager** | 0.78 | 8 reqs | 8, 9, 10, 11, 17, 34, 35 | `customer, delivery, clerk, blacklisted, digit` |
 | **C3** | **Order & Clerk Workflow & Lifecycle Manager** | 0.80 | 14 reqs | 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 42, 43, 44 | `order, clerk, delivery, invoice, shows` |
-| **C4** | **Order & Cancellation Workflow & Lifecycle Manager** | 0.87 | 5 reqs | 28, 29, 30, 31, 41 | `order, cancellation, cancels, assembled, final` |
-| **C5** | **SMS & Text Integration Gateway** | 0.90 | 3 reqs | 37, 40 | `sms, text, containing, order, message` |
+| **C4** | **Order & Cancellation Workflow & Lifecycle Manager** | 0.87 | 5 reqs | 28, 29, 30, 31, 41 | `order, cancellation, cancels, places, receives` |
+| **C5** | **SMS & Containing Integration Gateway** | 0.90 | 3 reqs | 37, 40 | `sms, containing, text, order, message` |
 
 ---
 
@@ -44,7 +44,7 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 - **Primary Responsibility:** Persistent entity storage, catalog definition, inventory indexing, and structured lookup queries. Encapsulates 14 requirements (e.g. [FR-14]: "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.").
 - **Internal Cohesion Score:** `0.75`
-- **Semantic Keywords:** `product, products, order, blueprint, cart`
+- **Semantic Keywords:** `product, products, order, breakfast, prepackaged`
 - **Architectural Archetype:** `Repository`
 - **Representative Medoid Requirement:** `[FR-14]` *"The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order."*
 
@@ -71,7 +71,7 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 - **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 8 requirements (e.g. [FR-08]: "The system identifies the customer by the customer number when the customer starts placing an order.").
 - **Internal Cohesion Score:** `0.78`
-- **Semantic Keywords:** `customer, delivery, clerk, exactly, blacklisted`
+- **Semantic Keywords:** `customer, delivery, clerk, blacklisted, digit`
 - **Architectural Archetype:** `Manager`
 - **Representative Medoid Requirement:** `[FR-08]` *"The system identifies the customer by the customer number when the customer starts placing an order."*
 
@@ -119,7 +119,7 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 
 - **Primary Responsibility:** Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 5 requirements (e.g. [FR-28]: "The system lets the customer cancel an order by its order number.").
 - **Internal Cohesion Score:** `0.87`
-- **Semantic Keywords:** `order, cancellation, cancels, assembled, final`
+- **Semantic Keywords:** `order, cancellation, cancels, places, receives`
 - **Architectural Archetype:** `Manager`
 - **Representative Medoid Requirement:** `[FR-28]` *"The system lets the customer cancel an order by its order number."*
 
@@ -133,11 +133,11 @@ To ensure the proposed component boundaries are robust and not an artifact of a 
 | `FR-28` | functional | 28 | The system lets the customer cancel an order by its order number. |
 | `FR-41` | functional | 41 | The system cancels an order when it receives an SMS cancellation message containing the order number (O). |
 
-### Component 5: SMS & Text Integration Gateway
+### Component 5: SMS & Containing Integration Gateway
 
 - **Primary Responsibility:** External protocol adaptation, message ingestion, format translation, and third-party integration. Encapsulates 3 requirements (e.g. [FR-37a]: "The system accepts orders sent by customers as SMS text messages to the company number.").
 - **Internal Cohesion Score:** `0.90`
-- **Semantic Keywords:** `sms, text, containing, order, message`
+- **Semantic Keywords:** `sms, containing, text, order, message`
 - **Architectural Archetype:** `Gateway`
 - **Representative Medoid Requirement:** `[FR-37a]` *"The system accepts orders sent by customers as SMS text messages to the company number."*
 
@@ -175,7 +175,7 @@ Semantic clustering groups requirements by **semantic cohesion** (what belongs t
 - **Central Anchor Requirement [FR-28]:** "The system lets the customer cancel an order by its order number."
 - **Internal Cohesion:** `0.87` across 5 allocated requirements
 
-### SMS & Text Integration Gateway (Gateway)
+### SMS & Containing Integration Gateway (Gateway)
 - **Boundary Role:** External protocol adaptation, message ingestion, format translation, and third-party integration. Encapsulates 3 requirements (e.g. [FR-37a]: "The system accepts orders sent by customers as SMS text messages to the company number.").
 - **Central Anchor Requirement [FR-37a]:** "The system accepts orders sent by customers as SMS text messages to the company number."
 - **Internal Cohesion:** `0.90` across 3 allocated requirements

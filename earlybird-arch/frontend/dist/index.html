@@ -714,6 +714,7 @@ Managerial dashboards summarize daily mission success rates, total fleet kilomet
         const val = selectPreset.value;
         if (val === 'earlybird') {
           customBox.classList.add('hidden');
+          inputReqs.value = "";
           inputProj.value = "EarlyBird";
         } else if (val === 'earlybird_base') {
           customBox.classList.remove('hidden');

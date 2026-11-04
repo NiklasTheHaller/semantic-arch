@@ -1,0 +1,710 @@
+{
+  "id": "run_1793805193",
+  "name": "EarlyBird Raw Software Patterns",
+  "timestamp": "1793805193",
+  "model": "qwen3-0.6b",
+  "instruction": true,
+  "method": "graph",
+  "naming_mode": "archetype",
+  "project_name": "EarlyBird Raw",
+  "num_requirements": 44,
+  "num_components": 5,
+  "silhouette": 0.15751326,
+  "data": {
+    "project_name": "EarlyBird Raw",
+    "naming_mode": "archetype",
+    "points": [
+      {
+        "id": "DR-02",
+        "text": "The product catalog offers prepackaged breakfast products, such as the mini-breakfast and the luxury breakfast.",
+        "x": 0.27277988,
+        "y": 0.2042533,
+        "cluster_id": 0,
+        "source_ids": [
+          2
+        ]
+      },
+      {
+        "id": "FR-03",
+        "text": "The system lets a customer assemble an individual breakfast by selecting simple products from the product catalog.",
+        "x": 0.20014444,
+        "y": 0.1315796,
+        "cluster_id": 0,
+        "source_ids": [
+          3
+        ]
+      },
+      {
+        "id": "DR-04",
+        "text": "A prepackaged product is composed of simple products and/or other prepackaged products (nested product composition).",
+        "x": 0.25942117,
+        "y": 0.29802126,
+        "cluster_id": 0,
+        "source_ids": [
+          4
+        ]
+      },
+      {
+        "id": "DR-05",
+        "text": "An order consists of order lines, each specifying a product (simple or prepackaged) and an amount.",
+        "x": 0.13495126,
+        "y": 0.1849175,
+        "cluster_id": 0,
+        "source_ids": [
+          5
+        ]
+      },
+      {
+        "id": "DR-06",
+        "text": "Each product has a unit of measure (e.g. 100 grams) and a price per unit in Euros.",
+        "x": 0.103063054,
+        "y": 0.18525761,
+        "cluster_id": 0,
+        "source_ids": [
+          6
+        ]
+      },
+      {
+        "id": "FR-08",
+        "text": "The system identifies the customer by the customer number when the customer starts placing an order.",
+        "x": 0.01992017,
+        "y": -0.16945028,
+        "cluster_id": 1,
+        "source_ids": [
+          8
+        ]
+      },
+      {
+        "id": "DR-09",
+        "text": "The system validates that a customer number consists of a two-digit area code, seven digits and a one-digit checksum.",
+        "x": -0.120665476,
+        "y": -0.23079737,
+        "cluster_id": 1,
+        "source_ids": [
+          9
+        ]
+      },
+      {
+        "id": "DR-10",
+        "text": "An order always belongs to exactly one customer; the system does not support collective orders of several customers.",
+        "x": 0.102337986,
+        "y": -0.13917172,
+        "cluster_id": 1,
+        "source_ids": [
+          10
+        ]
+      },
+      {
+        "id": "FR-11a",
+        "text": "The system authenticates the customer before an order can be placed.",
+        "x": -0.010371288,
+        "y": -0.3264078,
+        "cluster_id": 1,
+        "source_ids": [
+          11
+        ]
+      },
+      {
+        "id": "DR-11b",
+        "text": "During authentication the system checks that the customer is not blacklisted (e.g. due to bad payment morale) and rejects blacklisted customers.",
+        "x": -0.010359315,
+        "y": -0.44465464,
+        "cluster_id": 1,
+        "source_ids": [
+          11
+        ]
+      },
+      {
+        "id": "FR-11c",
+        "text": "The system lets the customer add one or several products directly to the shopping cart.",
+        "x": 0.22490035,
+        "y": 0.024343124,
+        "cluster_id": 0,
+        "source_ids": [
+          11
+        ]
+      },
+      {
+        "id": "FR-12",
+        "text": "The system lets the customer search for products by desired characteristics (e.g. less than 300 calories and less than € 4), shows the matching products and lets her add them to the shopping cart.",
+        "x": 0.24699838,
+        "y": 0.032372475,
+        "cluster_id": 0,
+        "source_ids": [
+          12
+        ]
+      },
+      {
+        "id": "FR-13",
+        "text": "The system lets the customer create a follow-up order by selecting one of her previous orders as a blueprint, copying its products into the shopping cart.",
+        "x": 0.10701674,
+        "y": 0.076815136,
+        "cluster_id": 0,
+        "source_ids": [
+          13
+        ]
+      },
+      {
+        "id": "FR-14",
+        "text": "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.",
+        "x": 0.25365347,
+        "y": 0.12140036,
+        "cluster_id": 0,
+        "source_ids": [
+          14
+        ]
+      },
+      {
+        "id": "DR-15",
+        "text": "An order references at most one blueprint order.",
+        "x": 0.10456277,
+        "y": 0.11298763,
+        "cluster_id": 0,
+        "source_ids": [
+          15
+        ]
+      },
+      {
+        "id": "DR-16",
+        "text": "A previous order can be used as the blueprint for any number of new orders.",
+        "x": 0.110909924,
+        "y": 0.13142242,
+        "cluster_id": 0,
+        "source_ids": [
+          16
+        ]
+      },
+      {
+        "id": "DR-17a",
+        "text": "Each customer has exactly one predefined address, which the system uses automatically as the delivery address of her orders.",
+        "x": -0.013114441,
+        "y": -0.048205476,
+        "cluster_id": 1,
+        "source_ids": [
+          17
+        ]
+      },
+      {
+        "id": "FR-17b",
+        "text": "When an order is placed, the system assigns an order number with eight digits and a checksum and shows it to the customer.",
+        "x": -0.06928518,
+        "y": -0.029791491,
+        "cluster_id": 2,
+        "source_ids": [
+          17
+        ]
+      },
+      {
+        "id": "FR-18",
+        "text": "The system shows the packing clerk each placed order so that she can assemble the ordered products into a paper bag.",
+        "x": -0.10771838,
+        "y": 0.11276768,
+        "cluster_id": 2,
+        "source_ids": [
+          18
+        ]
+      },
+      {
+        "id": "FR-19a",
+        "text": "The system prints a label for the order bag showing the packing clerk's name, the customer's first name, surname and address, and the order number.",
+        "x": -0.27689058,
+        "y": 0.11303888,
+        "cluster_id": 2,
+        "source_ids": [
+          19
+        ]
+      },
+      {
+        "id": "FR-19b",
+        "text": "The system lets the packing clerk assign a delivery clerk to the order, and the label shows the assigned delivery clerk.",
+        "x": -0.18172105,
+        "y": 0.042681046,
+        "cluster_id": 2,
+        "source_ids": [
+          19
+        ]
+      },
+      {
+        "id": "FR-21",
+        "text": "The system prints the invoice of an order in two copies.",
+        "x": -0.3381095,
+        "y": 0.18966465,
+        "cluster_id": 2,
+        "source_ids": [
+          21
+        ]
+      },
+      {
+        "id": "FR-22",
+        "text": "The invoice shows the label data plus each ordered product with its amount and price, and the total sum of the order.",
+        "x": -0.22813506,
+        "y": 0.19418694,
+        "cluster_id": 2,
+        "source_ids": [
+          22
+        ]
+      },
+      {
+        "id": "DR-23",
+        "text": "Each printed copy of an invoice gets its own invoice number.",
+        "x": -0.29916793,
+        "y": 0.1068539,
+        "cluster_id": 2,
+        "source_ids": [
+          23
+        ]
+      },
+      {
+        "id": "FR-24",
+        "text": "The system calculates the optimal delivery itinerary for a delivery clerk, covering several orders in one itinerary.",
+        "x": -0.08477245,
+        "y": 0.121415325,
+        "cluster_id": 2,
+        "source_ids": [
+          24
+        ]
+      },
+      {
+        "id": "FR-25",
+        "text": "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.",
+        "x": -0.23633318,
+        "y": 0.18128873,
+        "cluster_id": 2,
+        "source_ids": [
+          25
+        ]
+      },
+      {
+        "id": "FR-26",
+        "text": "The customer confirms receipt of the delivered order; one invoice copy stays with the customer as her receipt.",
+        "x": -0.19413175,
+        "y": -0.03839088,
+        "cluster_id": 2,
+        "source_ids": [
+          26
+        ]
+      },
+      {
+        "id": "FR-27",
+        "text": "The system lets the customer look up the status of her order by order number and shows whether the order is already out for delivery.",
+        "x": 0.013656423,
+        "y": -0.039567094,
+        "cluster_id": 2,
+        "source_ids": [
+          27
+        ]
+      },
+      {
+        "id": "FR-28",
+        "text": "The system lets the customer cancel an order by its order number.",
+        "x": 0.07694118,
+        "y": -0.20327798,
+        "cluster_id": 3,
+        "source_ids": [
+          28
+        ]
+      },
+      {
+        "id": "DR-29",
+        "text": "The system rejects the cancellation of an order that has already been assembled by the packing clerk.",
+        "x": -0.0070437235,
+        "y": -0.14620923,
+        "cluster_id": 3,
+        "source_ids": [
+          29
+        ]
+      },
+      {
+        "id": "DR-30",
+        "text": "A cancelled order cannot be reactivated; cancellation is final.",
+        "x": 0.058096133,
+        "y": -0.16834335,
+        "cluster_id": 3,
+        "source_ids": [
+          30
+        ]
+      },
+      {
+        "id": "DR-31",
+        "text": "The system does not allow changes to a placed order; to change it, the customer cancels the order and places a new one.",
+        "x": 0.107143655,
+        "y": -0.15228727,
+        "cluster_id": 3,
+        "source_ids": [
+          31
+        ]
+      },
+      {
+        "id": "FR-34a",
+        "text": "The system authorises users according to their role: customer, packing clerk, delivery clerk or manager.",
+        "x": -0.021163266,
+        "y": -0.22412544,
+        "cluster_id": 1,
+        "source_ids": [
+          34
+        ]
+      },
+      {
+        "id": "FR-35",
+        "text": "The system lets the customer confirm the delivery of her order by entering her password in a browser on the delivery clerk's smartphone.",
+        "x": -0.047822136,
+        "y": -0.20561522,
+        "cluster_id": 1,
+        "source_ids": [
+          35
+        ]
+      },
+      {
+        "id": "FR-36",
+        "text": "The system offers a public product search that anyone can use without logging in.",
+        "x": 0.25359148,
+        "y": -0.03807793,
+        "cluster_id": 0,
+        "source_ids": [
+          36
+        ]
+      },
+      {
+        "id": "FR-37a",
+        "text": "The system accepts orders sent by customers as SMS text messages to the company number.",
+        "x": -0.01264357,
+        "y": -0.10817538,
+        "cluster_id": 4,
+        "source_ids": [
+          37
+        ]
+      },
+      {
+        "id": "DR-37b",
+        "text": "The system parses an SMS order message containing the customer number (C), the password (W) and one or more product codes with amounts (P).",
+        "x": 0.01633661,
+        "y": -0.06276698,
+        "cluster_id": 4,
+        "source_ids": [
+          37
+        ]
+      },
+      {
+        "id": "DR-38",
+        "text": "Each product has a unique product code.",
+        "x": 0.19131124,
+        "y": 0.13290067,
+        "cluster_id": 0,
+        "source_ids": [
+          38
+        ]
+      },
+      {
+        "id": "DR-39",
+        "text": "An SMS order may contain any number of products, limited only by the maximum length of a text message.",
+        "x": 0.16231324,
+        "y": 0.09806529,
+        "cluster_id": 0,
+        "source_ids": [
+          39
+        ]
+      },
+      {
+        "id": "FR-40",
+        "text": "The system replies to an SMS order with a text message containing the assigned order number.",
+        "x": -0.06555171,
+        "y": -0.06678042,
+        "cluster_id": 4,
+        "source_ids": [
+          40
+        ]
+      },
+      {
+        "id": "FR-41",
+        "text": "The system cancels an order when it receives an SMS cancellation message containing the order number (O).",
+        "x": 0.016534096,
+        "y": -0.18619499,
+        "cluster_id": 3,
+        "source_ids": [
+          41
+        ]
+      },
+      {
+        "id": "DR-42",
+        "text": "An expected-payment record for the external payment system contains the customer number, the order number, the amount in Euros and the expected payment date.",
+        "x": -0.21443264,
+        "y": 0.016367916,
+        "cluster_id": 2,
+        "source_ids": [
+          42
+        ]
+      },
+      {
+        "id": "FR-43",
+        "text": "When the packing clerk has finished assembling an order, the system sends an expected-payment record to the external payment system.",
+        "x": -0.24248224,
+        "y": 0.0444529,
+        "cluster_id": 2,
+        "source_ids": [
+          43
+        ]
+      },
+      {
+        "id": "FR-44",
+        "text": "Every night the system automatically prints a business report for the manager listing all orders of the day with products, amounts, packing clerk, delivery clerk, customer, customer address and order number.",
+        "x": -0.25466856,
+        "y": 0.17123671,
+        "cluster_id": 2,
+        "source_ids": [
+          44
+        ]
+      }
+    ],
+    "components": [
+      {
+        "cluster_id": 0,
+        "name": "Product & Products Catalog & Repository",
+        "responsibility": "Persistent entity storage, catalog definition, inventory indexing, and structured lookup queries. Encapsulates 14 requirements (e.g. [FR-14]: \"The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.\").",
+        "cohesion": 0.74610204,
+        "medoid_id": "FR-14",
+        "medoid_text": "The system lets the customer combine direct product selection, product search and a blueprint order when assembling the shopping cart of one order.",
+        "keywords": [
+          "product",
+          "products",
+          "order",
+          "breakfast",
+          "prepackaged"
+        ],
+        "requirement_ids": [
+          "DR-02",
+          "DR-04",
+          "DR-05",
+          "DR-06",
+          "DR-15",
+          "DR-16",
+          "DR-38",
+          "DR-39",
+          "FR-03",
+          "FR-11c",
+          "FR-12",
+          "FR-13",
+          "FR-14",
+          "FR-36"
+        ],
+        "source_pdf_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          36,
+          38,
+          39
+        ],
+        "archetype": "Repository"
+      },
+      {
+        "cluster_id": 1,
+        "name": "Customer & Delivery Workflow & Lifecycle Manager",
+        "responsibility": "Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 8 requirements (e.g. [FR-08]: \"The system identifies the customer by the customer number when the customer starts placing an order.\").",
+        "cohesion": 0.7777794,
+        "medoid_id": "FR-08",
+        "medoid_text": "The system identifies the customer by the customer number when the customer starts placing an order.",
+        "keywords": [
+          "customer",
+          "delivery",
+          "clerk",
+          "blacklisted",
+          "digit"
+        ],
+        "requirement_ids": [
+          "DR-09",
+          "DR-10",
+          "DR-11b",
+          "DR-17a",
+          "FR-08",
+          "FR-11a",
+          "FR-34a",
+          "FR-35"
+        ],
+        "source_pdf_ids": [
+          8,
+          9,
+          10,
+          11,
+          17,
+          34,
+          35
+        ],
+        "archetype": "Manager"
+      },
+      {
+        "cluster_id": 2,
+        "name": "Order & Clerk Workflow & Lifecycle Manager",
+        "responsibility": "Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 14 requirements (e.g. [FR-25]: \"The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.\").",
+        "cohesion": 0.7964599,
+        "medoid_id": "FR-25",
+        "medoid_text": "The system prints the optimal delivery itinerary together with the list of orders (bags and invoices) the delivery clerk has to deliver.",
+        "keywords": [
+          "order",
+          "clerk",
+          "delivery",
+          "invoice",
+          "payment"
+        ],
+        "requirement_ids": [
+          "DR-23",
+          "DR-42",
+          "FR-17b",
+          "FR-18",
+          "FR-19a",
+          "FR-19b",
+          "FR-21",
+          "FR-22",
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-43",
+          "FR-44"
+        ],
+        "source_pdf_ids": [
+          17,
+          18,
+          19,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          42,
+          43,
+          44
+        ],
+        "archetype": "Manager"
+      },
+      {
+        "cluster_id": 3,
+        "name": "Order & Cancellation Workflow & Lifecycle Manager",
+        "responsibility": "Finite state machine, business process orchestration, stage progression, and status tracking. Encapsulates 5 requirements (e.g. [FR-28]: \"The system lets the customer cancel an order by its order number.\").",
+        "cohesion": 0.87162286,
+        "medoid_id": "FR-28",
+        "medoid_text": "The system lets the customer cancel an order by its order number.",
+        "keywords": [
+          "order",
+          "cancellation",
+          "cancels",
+          "places",
+          "cancelled"
+        ],
+        "requirement_ids": [
+          "DR-29",
+          "DR-30",
+          "DR-31",
+          "FR-28",
+          "FR-41"
+        ],
+        "source_pdf_ids": [
+          28,
+          29,
+          30,
+          31,
+          41
+        ],
+        "archetype": "Manager"
+      },
+      {
+        "cluster_id": 4,
+        "name": "SMS & Text Integration Gateway",
+        "responsibility": "External protocol adaptation, message ingestion, format translation, and third-party integration. Encapsulates 3 requirements (e.g. [FR-37a]: \"The system accepts orders sent by customers as SMS text messages to the company number.\").",
+        "cohesion": 0.9042826,
+        "medoid_id": "FR-37a",
+        "medoid_text": "The system accepts orders sent by customers as SMS text messages to the company number.",
+        "keywords": [
+          "sms",
+          "text",
+          "containing",
+          "order",
+          "message"
+        ],
+        "requirement_ids": [
+          "DR-37b",
+          "FR-37a",
+          "FR-40"
+        ],
+        "source_pdf_ids": [
+          37,
+          40
+        ],
+        "archetype": "Gateway"
+      }
+    ],
+    "edges": [
+      {
+        "from": 3,
+        "to": 4,
+        "strength": 0.77226925,
+        "label": "coupling: 0.77"
+      },
+      {
+        "from": 2,
+        "to": 4,
+        "strength": 0.75679034,
+        "label": "coupling: 0.76"
+      },
+      {
+        "from": 1,
+        "to": 4,
+        "strength": 0.74208575,
+        "label": "coupling: 0.74"
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "strength": 0.73573625,
+        "label": "coupling: 0.74"
+      },
+      {
+        "from": 1,
+        "to": 3,
+        "strength": 0.7330538,
+        "label": "coupling: 0.73"
+      },
+      {
+        "from": 0,
+        "to": 4,
+        "strength": 0.7271594,
+        "label": "coupling: 0.73"
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "strength": 0.72423416,
+        "label": "coupling: 0.72"
+      },
+      {
+        "from": 0,
+        "to": 3,
+        "strength": 0.7158977,
+        "label": "coupling: 0.72"
+      },
+      {
+        "from": 0,
+        "to": 2,
+        "strength": 0.7099885,
+        "label": "coupling: 0.71"
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "strength": 0.69028264,
+        "label": "coupling: 0.69"
+      }
+    ],
+    "silhouette": 0.15751326,
+    "pairs_count": 946
+  }
+}

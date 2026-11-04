@@ -453,7 +453,7 @@ C3: Order &amp; Clerk Workflow &amp; Lifecycle Manager
 C4: Order &amp; Cancellation Workflow &amp; Lifecycle Manager
 </text>
 <text x="775" y="125" dy="0.76em" text-anchor="start" font-family="sans-serif" font-size="9.67741935483871" opacity="1" fill="#000000">
-C5: SMS &amp; Text Integration Gateway
+C5: SMS &amp; Containing Integration Gateway
 </text>
 <circle cx="755" cy="70" r="5" opacity="1" fill="#1F77B4" stroke="none" stroke-width="1"/>
 <circle cx="755" cy="85" r="5" opacity="1" fill="#FF7F0E" stroke="none" stroke-width="1"/>

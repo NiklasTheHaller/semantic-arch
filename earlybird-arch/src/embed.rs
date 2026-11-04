@@ -74,8 +74,17 @@ pub fn embed_requirements(
                 if cached.model == model_type.to_string()
                     && cached.use_instruction == use_instruction
                     && cached.items.len() == reqs.len()
+                    && cached
+                        .items
+                        .iter()
+                        .zip(reqs.iter())
+                        .all(|(ci, ri)| ci.id == ri.id && ci.text == ri.text)
                 {
-                    println!("Loaded {} cached embeddings from {:?}", cached.items.len(), cache_path);
+                    println!(
+                        "Loaded {} cached embeddings (content verified) from {:?}",
+                        cached.items.len(),
+                        cache_path
+                    );
                     return Ok(cached);
                 }
             }
